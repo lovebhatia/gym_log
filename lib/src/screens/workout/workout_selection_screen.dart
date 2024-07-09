@@ -1,10 +1,10 @@
-import '../animations/transitions.dart';
-import '../resources/app_colors.dart';
+import '../../animations/transitions.dart';
+import '../../resources/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'workout/workout_at_gym_screen.dart';
+import 'workout_at_gym_screen.dart';
 
 class WorkoutSelectionScreen extends StatefulWidget {
   const WorkoutSelectionScreen({super.key});

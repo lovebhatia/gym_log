@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../customicons/app_icons.dart';
-import 'workout_selection_screen.dart';
+import 'workout/workout_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/dashboard2';
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
 _getPage(int page) {
   switch (page) {
     case 0:
-      return WorkoutSelectionScreen();
+      return const WorkoutSelectionScreen();
     case 1:
     //return DietScreen();
     case 2:

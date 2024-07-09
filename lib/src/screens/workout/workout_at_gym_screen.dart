@@ -52,7 +52,7 @@ class _WorkoutAtGymScreenState extends State<WorkoutAtGymScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              WorkoutGridWidget(), //showing normal  workout and exercise
+              const WorkoutGridWidget(), //showing normal  workout and exercise
               SizedBox(height: 20.h),
             ],
           ),
