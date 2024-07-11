@@ -20,7 +20,7 @@ class ExerciseListWidget extends StatelessWidget {
         itemBuilder: (ctx, index) {
           return ExerciseTileWidget(
             gif: exercises[index].gifName,
-            nameOfExercise: exercises[index].exerciseName,
+            exerciseName: exercises[index].exerciseName,
             sets: exercises[index].setRange,
             description: exercises[index].exerciseDescription,
           );

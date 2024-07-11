@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gym_log_exercise/src/widgets/exercise/exercise_details_widget.dart';
 import '../../resources/app_colors.dart';
 import '../../resources/app_constant.dart';
 
 class ExerciseTileWidget extends StatelessWidget {
-  final String nameOfExercise;
+  final String exerciseName;
   final String sets;
   final String gif;
   final String description;
 
   const ExerciseTileWidget({
     super.key,
-    required this.nameOfExercise,
+    required this.exerciseName,
     required this.sets,
     required this.gif,
     required this.description,
@@ -37,17 +38,17 @@ class ExerciseTileWidget extends StatelessWidget {
               ),
               context: context,
               builder: (BuildContext context) {
-                return BegModalSheet(
+                return ExerciseDetailsWidget(
                   gif: gif,
                   sets: sets,
-                  name_of_exercise: nameOfExcercise,
+                  exerciseName: exerciseName,
                   description: description,
                 );
               },
             );
           },
           title: Text(
-            nameOfExercise,
+            exerciseName,
             style: GoogleFonts.lato(
               textStyle: const TextStyle(
                 color: Colors.white,
