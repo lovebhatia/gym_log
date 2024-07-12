@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:gym_log_exercise/src/model/exercise/exercise_per_user_model.dart';
 import 'package:gym_log_exercise/src/model/exercise/rep_record_per_user_model.dart';
 import 'package:intl/intl.dart';
@@ -133,7 +135,7 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
       repsControllers.add(repsController);
       rows.add(
         RepsRecordWidget(
-          index: record.set,
+          index: record.set != 0 ? record.set : 3,
           weightController: weightController,
           repsController: repsController,
           onWeightChanged: (newValue) =>
@@ -144,6 +146,136 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
       );
     });
   }
+
+  Widget _buildHistory() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Text(
+                'Set',
+                style: GoogleFonts.montserrat(
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  ),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                'Weight (Kg)',
+                style: GoogleFonts.montserrat(
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  ),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                'Reps',
+                style: GoogleFonts.montserrat(
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  ),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+      ...exerciseSets.map((exerciseSet) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: exerciseSet.exerciseSetRecords.map((record) {
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+              margin: const EdgeInsets.only(top: 8),
+              decoration: BoxDecoration(
+                color: Colors.grey[900],
+                border: Border.all(color: Colors.grey[800]!),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      '${record.set != 0 ? record.set : 3}',
+                      style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      '${record.weight}',
+                      style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      '${record.reps}',
+                      style: GoogleFonts.montserrat(
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        );
+      }).toList(),
+    ],
+  );
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +305,8 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
                 ),
               ],
             ),
+             const SizedBox(height: 16),
+            _buildHistory(),
           ],
         ),
       ),
