@@ -6,11 +6,9 @@ import '../../resources/app_colors.dart';
 
 class ExerciseListWidget extends StatelessWidget {
   final List<ExercisesPerWorkoutModel> exercises;
-
-  const ExerciseListWidget({
-    super.key,
-    required this.exercises,
-  });
+  final String selectedWorkout;
+  const ExerciseListWidget(
+      {super.key, required this.exercises, required this.selectedWorkout});
 
   @override
   Widget build(BuildContext context) {
