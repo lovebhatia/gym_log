@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gym_log_exercise/src/screens/exercise/exercise_details_screen.dart';
-
 import '../../animations/transitions.dart';
 import '../../resources/app_colors.dart';
 import '../../model/exercise/exercise_per_workout_model.dart';
@@ -75,13 +74,15 @@ class _ExercisePerWorkoutScreenState extends State<ExercisePerWorkoutScreen> {
                     context,
                     UpTransition1(
                       ExerciseDetailScreen(
-                        exercisePerWorkoutList: exercisePerWorkoutList,
-                      ),
+                          exercisePerWorkoutList: exercisePerWorkoutList,
+                          selectedWorkout: widget.selectedDay),
                     ),
                   );
                 },
               ),
-              ExerciseListWidget(exercises: exercisePerWorkoutList),
+              ExerciseListWidget(
+                  exercises: exercisePerWorkoutList,
+                  selectedWorkout: widget.selectedDay),
             ],
           ),
         ),

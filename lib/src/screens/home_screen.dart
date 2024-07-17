@@ -1,3 +1,5 @@
+import 'package:gym_log_exercise/src/screens/exercise/exercise_history_screen.dart';
+
 import '../resources/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -57,7 +59,7 @@ _getPage(int page) {
     case 0:
       return const WorkoutSelectionScreen();
     case 1:
-    //return DietScreen();
+      return ExerciseHistoryPage();
     case 2:
     // return BMIScreen();
     case 3:

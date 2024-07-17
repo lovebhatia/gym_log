@@ -11,6 +11,7 @@ class ExerciseDetailsWidget extends StatelessWidget {
   final String exerciseName;
   final String sets;
   final String description;
+  final String gifExt = 'gif';
 
   const ExerciseDetailsWidget({
     super.key,
@@ -49,7 +50,8 @@ class ExerciseDetailsWidget extends StatelessWidget {
                     height: 200.h,
                     width: 350.w,
                     child: Image(
-                      image: NetworkImage('${AppConst.ChestGifBaseUrl}$gif'),
+                      image:
+                          NetworkImage('${AppConst.ChestGifBaseUrl}/gif/$gif'),
                     ),
                   ),
                 ),

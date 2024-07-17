@@ -154,9 +154,6 @@ class AuthProvider with ChangeNotifier {
 
       //Log user in
       token = responseData['accessToken'];
-
-      print('token ' + token.toString());
-
       notifyListeners();
 
       //store login data in shared preferences

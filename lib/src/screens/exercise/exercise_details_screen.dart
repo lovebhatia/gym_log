@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
   final List<ExercisesPerWorkoutModel> exercisePerWorkoutList;
+  final String selectedWorkout;
 
-  const ExerciseDetailScreen({
-    super.key,
-    required this.exercisePerWorkoutList,
-  });
+  const ExerciseDetailScreen(
+      {super.key,
+      required this.exercisePerWorkoutList,
+      required this.selectedWorkout});
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +36,9 @@ class ExerciseDetailScreen extends StatelessWidget {
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
-          body: ExerciseDetailScreen(
-            exercisePerWorkoutList: exercisePerWorkoutList,
-          ),
+          //body: ExerciseDetailScreen(
+          //exercisePerWorkoutList: exercisePerWorkoutList,
+          //),
         ),
       ),
     );
