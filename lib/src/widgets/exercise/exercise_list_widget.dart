@@ -17,11 +17,11 @@ class ExerciseListWidget extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemBuilder: (ctx, index) {
           return ExerciseTileWidget(
-            gif: exercises[index].gifName,
-            exerciseName: exercises[index].exerciseName,
-            sets: exercises[index].setRange,
-            description: exercises[index].exerciseDescription,
-          );
+              gif: exercises[index].gifName,
+              exerciseName: exercises[index].exerciseName,
+              sets: exercises[index].setRange,
+              description: exercises[index].exerciseDescription,
+              selectedWorkout: selectedWorkout);
         },
         itemCount: exercises.length,
       ),

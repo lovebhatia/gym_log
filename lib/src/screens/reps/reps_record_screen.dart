@@ -154,7 +154,7 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
       repsControllers.add(repsController);
       rows.add(
         RepsRecordWidget(
-          index: record.set != 0 ? record.set : 3,
+          index: record.set,
           weightController: weightController,
           repsController: repsController,
           onWeightChanged: (newValue) =>

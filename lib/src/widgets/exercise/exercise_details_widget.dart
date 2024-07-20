@@ -12,6 +12,7 @@ class ExerciseDetailsWidget extends StatelessWidget {
   final String sets;
   final String description;
   final String gifExt = 'gif';
+  final String selectedWorkout;
 
   const ExerciseDetailsWidget({
     super.key,
@@ -19,6 +20,7 @@ class ExerciseDetailsWidget extends StatelessWidget {
     required this.exerciseName,
     required this.sets,
     required this.description,
+    required this.selectedWorkout,
   });
 
   @override
@@ -50,8 +52,8 @@ class ExerciseDetailsWidget extends StatelessWidget {
                     height: 200.h,
                     width: 350.w,
                     child: Image(
-                      image:
-                          NetworkImage('${AppConst.ChestGifBaseUrl}/gif/$gif'),
+                      image: NetworkImage(
+                          '${AppConst.ChestGifBaseUrl}${selectedWorkout.toLowerCase()}/gifs/$gif'),
                     ),
                   ),
                 ),

@@ -10,14 +10,15 @@ class ExerciseTileWidget extends StatelessWidget {
   final String sets;
   final String gif;
   final String description;
+  final String selectedWorkout;
 
-  const ExerciseTileWidget({
-    super.key,
-    required this.exerciseName,
-    required this.sets,
-    required this.gif,
-    required this.description,
-  });
+  const ExerciseTileWidget(
+      {super.key,
+      required this.exerciseName,
+      required this.sets,
+      required this.gif,
+      required this.description,
+      required this.selectedWorkout});
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +40,11 @@ class ExerciseTileWidget extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return ExerciseDetailsWidget(
-                  gif: gif,
-                  sets: sets,
-                  exerciseName: exerciseName,
-                  description: description,
-                );
+                    gif: gif,
+                    sets: sets,
+                    exerciseName: exerciseName,
+                    description: description,
+                    selectedWorkout: selectedWorkout);
               },
             );
           },
@@ -71,7 +72,8 @@ class ExerciseTileWidget extends StatelessWidget {
           trailing: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image(
-              image: NetworkImage('${AppConst.ChestGifBaseUrl}$gif'),
+              image: NetworkImage(
+                  '${AppConst.imageBaseUrl}${selectedWorkout.toLowerCase()}/${exerciseName.replaceAll(' ', '')}.jpg'),
             ),
           ),
         ),
