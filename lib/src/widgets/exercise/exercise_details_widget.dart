@@ -42,7 +42,7 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget> {
 
   Future<void> _loadCachedVideo() async {
     final fileInfo = await DefaultCacheManager().getSingleFile(
-      '${AppConst.videoBaseUrl}${widget.selectedWorkout}/${widget.exerciseName.replaceAll(' ', '')}.mp4',
+      '${AppConst.videoBaseUrl}${widget.selectedWorkout.toLowerCase()}/${widget.exerciseName.toLowerCase().replaceAll(' ', '_')}.mp4',
     );
     _controller = VideoPlayerController.file(fileInfo);
     _initializeVideoPlayerFuture = _controller.initialize().then((_) {
