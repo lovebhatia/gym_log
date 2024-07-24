@@ -40,7 +40,7 @@ class ExerciseTileWidget extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return ExerciseDetailsWidget(
-                    gif: gif,
+                    videoUrl: gif,
                     sets: sets,
                     exerciseName: exerciseName,
                     description: description,
