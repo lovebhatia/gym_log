@@ -116,6 +116,11 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
             _addExistingRow(record);
           }
         }
+        if (rowData.isEmpty) {
+          for (int i = 0; i < 1; i++) {
+            _addRow();
+          }
+        }
       });
     } catch (e) {
       print('Failed to fetch data: $e');
