@@ -72,8 +72,8 @@ class _WorkoutGridState extends State<WorkoutGridWidget> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ExercisePerWorkoutScreen(
-                      selectedDay: exercise.workout!,
-                      id: exercise.id.toString()!,
+                      selectedDay: exercise.workout,
+                      id: exercise.id.toString(),
                     ),
                   ),
                 );

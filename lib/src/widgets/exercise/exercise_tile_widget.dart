@@ -73,7 +73,7 @@ class ExerciseTileWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: Image(
               image: NetworkImage(
-                  '${AppConst.imageBaseUrl}${selectedWorkout.toLowerCase()}/${exerciseName.replaceAll(' ', '')}.jpg'),
+                  '${AppConst.imageBaseUrl}${selectedWorkout.toLowerCase()}/${exerciseName.toLowerCase().replaceAll(' ', '_')}.jpg'),
             ),
           ),
         ),
