@@ -44,8 +44,8 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     for (int i = 0; i < rowCount; i++) {
       _addRow();
     }
-    _fetchData();
     _fetchHistory();
+    _fetchData();
   }
 
   void _addRow() {
@@ -116,7 +116,11 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
             _addExistingRow(record);
           }
         }
-        if (rowData.isEmpty) {
+        if (rowData.isEmpty && exerciseSetsHistory.isEmpty) {
+          for (int i = 0; i < 3; i++) {
+            _addRow();
+          }
+        } else {
           for (int i = 0; i < 1; i++) {
             _addRow();
           }
