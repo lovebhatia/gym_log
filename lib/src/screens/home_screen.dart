@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../customicons/app_icons.dart';
+import 'bmi/bmiScreen.dart';
 import 'workout/workout_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -59,7 +60,7 @@ _getPage(int page) {
     case 0:
       return const WorkoutSelectionScreen();
     case 1:
-      return ExerciseHistoryPage();
+      return BMIScreen();
     case 2:
     // return BMIScreen();
     case 3:
