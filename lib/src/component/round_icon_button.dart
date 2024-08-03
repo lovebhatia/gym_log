@@ -5,12 +5,12 @@ class RoundIconButton extends StatelessWidget {
   RoundIconButton({
     required this.icon,
     required this.onPressed,
-    required this.iconSize, // Added iconSize parameter
+    //required this.iconSize, // Added iconSize parameter
   });
 
   final IconData icon;
   final Function onPressed;
-  final double iconSize; // Added iconSize field
+  //final double iconSize; // Added iconSize field
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class RoundIconButton extends StatelessWidget {
       fillColor: Colors.white,
       child: Icon(
         icon,
-        size: iconSize, // Set icon size here
+        //size: iconSize, // Set icon size here
       ),
     );
   }

@@ -24,7 +24,7 @@ class ResultsPage extends StatelessWidget {
           backgroundColor: AppColors.BLACK,
           appBar: AppBar(
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.of(context).pop(),
             ),
             backgroundColor: AppColors.BLACK,
@@ -32,7 +32,7 @@ class ResultsPage extends StatelessWidget {
             title: Text(
               'BMI CALCULATOR',
               style: GoogleFonts.montserrat(
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600)),
+                  textStyle: TextStyle(fontWeight: FontWeight.w600)),
             ),
           ),
           body: Column(
@@ -57,7 +57,7 @@ class ResultsPage extends StatelessWidget {
               ),
               // SizedBox(height: 10.h,),
               ReusableCard(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                     colors: [AppColors.LIGHT_BLACK, AppColors.LIGHT_BLACK]),
                 cardChild: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -73,7 +73,7 @@ class ResultsPage extends StatelessWidget {
                     Text(
                       bmiResult,
                       style: GoogleFonts.montserrat(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                             color: Colors.white,
                             fontSize: 100,
                             fontWeight: FontWeight.w800),
@@ -118,7 +118,7 @@ class ResultsPage extends StatelessWidget {
                     ),
                   ),
                   child: Ink(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           Color(0xffaa076b),

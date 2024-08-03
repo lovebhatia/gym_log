@@ -51,6 +51,12 @@ class _BMIScreenState extends State<BMIScreen> {
     });
   }
 
+  String getHeightInFeetInches(int cm) {
+    int feet = (cm ~/ 30.48).toInt();
+    int inches = ((cm % 30.48) / 2.54).round();
+    return "$feet' $inches\" ft in";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,7 +113,7 @@ class _BMIScreenState extends State<BMIScreen> {
                             : kInactiveCardColour,
                         cardChild: IconContent(
                           icon: FontAwesomeIcons.mars,
-                          iconSize: 60.0,
+                          iconSize: 20.0,
                           label: 'MALE',
                         ),
                       ),
@@ -126,7 +132,7 @@ class _BMIScreenState extends State<BMIScreen> {
                         cardChild: IconContent(
                           icon: FontAwesomeIcons.venus,
                           label: 'FEMALE',
-                          iconSize: 60.0,
+                          iconSize: 20.0,
                         ),
                       ),
                     ),
@@ -144,9 +150,7 @@ class _BMIScreenState extends State<BMIScreen> {
                         fontSize: 14.sp, // Smaller font size
                       ),
                     ),
-                    SizedBox(
-                      height: 2.h,
-                    ), // Reduced space between label and value
+                    // Space between value and slider // Reduced space between label and value
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -155,7 +159,7 @@ class _BMIScreenState extends State<BMIScreen> {
                         Text(
                           height.toString(),
                           style: kNumberTextStyle.copyWith(
-                            fontSize: 28.sp, // Smaller font size
+                            fontSize: 15.sp, // Smaller font size
                           ),
                         ),
                         SizedBox(
@@ -168,6 +172,12 @@ class _BMIScreenState extends State<BMIScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    Text(
+                      getHeightInFeetInches(height),
+                      style: kLabelTextStyle.copyWith(
+                        fontSize: 14.sp,
+                      ),
                     ),
                     SizedBox(
                       height: 5.h,
@@ -202,7 +212,7 @@ class _BMIScreenState extends State<BMIScreen> {
                 children: <Widget>[
                   // Increased width of weight card
                   Container(
-                    width: 170.w, // Set width for weight card
+                    width: 200.w, // Set width for weight card
                     child: ReusableCard(
                       gradient: kActiveCardColour,
                       cardChild: Column(
@@ -244,9 +254,9 @@ class _BMIScreenState extends State<BMIScreen> {
                     ),
                   ),
                   // Increased width of age card
-                  SizedBox(width: 10.w), // Reduced space between cards
+                  SizedBox(width: 2.w), // Reduced space between cards
                   Container(
-                    width: 170.w, // Set width for age card
+                    width: 150.w, // Set width for age card
                     child: ReusableCard(
                       gradient: kActiveCardColour,
                       cardChild: Column(
@@ -302,16 +312,15 @@ class _BMIScreenState extends State<BMIScreen> {
                     ),
                   ),
                   onPressed: () {
-                    CalculatorBrain calc =
-                        CalculatorBrain(height: height, weight: weight);
-
+                    CalculatorBrain calc = CalculatorBrain();
+                    String _bmiResult = calc.calculateBMI(height, weight);
                     Navigator.push(
                       context,
                       SlideLeftTransition(
                         ResultsPage(
-                          bmiResult: calc.calculateBMI(),
-                          resultText: calc.getResult(),
-                          interpretation: calc.getInterpretation(),
+                          bmiResult: calc.calculateBMI(height, weight),
+                          resultText: calc.getResult(_bmiResult),
+                          interpretation: calc.getInterpretation(_bmiResult),
                         ),
                       ),
                     );
