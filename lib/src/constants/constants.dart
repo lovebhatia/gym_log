@@ -19,7 +19,7 @@ const kBottomContainerColour = Color(0xFFEB1555);
 
 var kLabelTextStyle = GoogleFonts.lato(
     textStyle: TextStyle(
-  fontSize: 16.0.sp,
+  fontSize: 14.0.sp,
   color: Colors.white,
   fontWeight: FontWeight.w900,
 ));

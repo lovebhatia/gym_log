@@ -45,7 +45,7 @@ class _ExerciseHistoryPageState extends State<ExerciseHistoryPage> {
         title: Text(
           'Exercise History',
           style: GoogleFonts.montserrat(
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w700,
@@ -74,7 +74,7 @@ class _ExerciseHistoryPageState extends State<ExerciseHistoryPage> {
                       child: Text(
                         value,
                         style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
+                          textStyle: const TextStyle(
                             color: Colors.black,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -109,12 +109,12 @@ class _ExerciseHistoryPageState extends State<ExerciseHistoryPage> {
                   },
                   child: Row(
                     children: [
-                      Icon(Icons.calendar_today, color: Colors.black),
-                      SizedBox(width: 8),
+                      const Icon(Icons.calendar_today, color: Colors.black),
+                      const SizedBox(width: 8),
                       Text(
                         DateFormat('yyyy-MM-dd').format(selectedDateFilter),
                         style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
+                          textStyle: const TextStyle(
                             color: Colors.black,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -134,7 +134,7 @@ class _ExerciseHistoryPageState extends State<ExerciseHistoryPage> {
                       child: Text(
                         value,
                         style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
+                          textStyle: const TextStyle(
                             color: Colors.black,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -179,7 +179,7 @@ class _ExerciseHistoryPageState extends State<ExerciseHistoryPage> {
       title: Text(
         formattedDate,
         style: GoogleFonts.montserrat(
-          textStyle: TextStyle(
+          textStyle: const TextStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -214,7 +214,7 @@ class _ExerciseHistoryPageState extends State<ExerciseHistoryPage> {
             Text(
               '${record.set != 0 ? record.set : 3} - ${record.weight}kg - ${record.reps} reps',
               style: GoogleFonts.montserrat(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                   color: Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

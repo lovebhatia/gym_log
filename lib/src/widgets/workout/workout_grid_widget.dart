@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:gym_log_exercise/src/model/workout/workout_model.dart';
 import 'package:gym_log_exercise/src/screens/exercise/exercise_per_workout_screen.dart';
 import 'package:gym_log_exercise/src/service/workout_program_service.dart';
-import '../../resources/app_colors.dart';
-import '../../resources/app_constant.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_constant.dart';
 
 class WorkoutGridWidget extends StatefulWidget {
   const WorkoutGridWidget({super.key});
@@ -23,7 +23,6 @@ class _WorkoutGridState extends State<WorkoutGridWidget> {
   }
 
   Future<void> _fetchExerciseDays() async {
-    print('Fetching Single workouts');
     try {
       final fetchedExerciseDayList =
           await WorkoutProgramService().fetchWorkout();
@@ -45,7 +44,7 @@ class _WorkoutGridState extends State<WorkoutGridWidget> {
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.0),
           child: Text(
-            'Exercises',
+            'Exercise Library',
             style: TextStyle(
               color: Colors.white,
               fontSize: 20.0,
@@ -77,7 +76,6 @@ class _WorkoutGridState extends State<WorkoutGridWidget> {
                     ),
                   ),
                 );
-                print('Exercise ${exercise.workout} tapped');
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -11,7 +11,7 @@ class IconContent extends StatelessWidget {
   IconContent(
       {required this.icon,
       required this.label,
-      this.iconSize = 80.0}); // Default iconSize
+      this.iconSize = 40.0}); // Default iconSize
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +22,8 @@ class IconContent extends StatelessWidget {
           icon,
           size: iconSize, // Use the iconSize parameter
         ),
-        SizedBox(
-          height: 15.0,
+        const SizedBox(
+          height: 12.0,
         ),
         Text(
           label,

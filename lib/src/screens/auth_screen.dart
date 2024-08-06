@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gym_log_exercise/src/exceptions/httpException.dart';
-import 'package:gym_log_exercise/src/helpers/consts.dart';
+import 'package:gym_log_exercise/src/constants/consts.dart';
 import 'package:gym_log_exercise/src/providers/auth.dart';
 import 'package:gym_log_exercise/src/providers/launch_url.dart';
-import 'package:gym_log_exercise/src/resources/app_colors.dart';
+import 'package:gym_log_exercise/src/constants/app_colors.dart';
 import 'package:provider/provider.dart';
+
+import '../constants/app_constant.dart';
 
 enum AuthMode {
   Signup,
@@ -45,8 +47,8 @@ class AuthScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           const Image(
-                            image: AssetImage('asset/images/beg.jpg'),
-                            width: 85,
+                            image:
+                                NetworkImage('${AppConst.imageBaseUrl}beg.jpg'),
                           ),
                           Container(
                             margin: const EdgeInsets.only(bottom: 20.0),
@@ -62,7 +64,7 @@ class AuthScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 0.025 * deviceSize.height),
-                          AuthCard(), // No need for Flexible here
+                          const AuthCard(), // No need for Flexible here
                         ],
                       ),
                     ),
@@ -230,10 +232,10 @@ class _AuthCardState extends State<AuthCard> {
                 children: <Widget>[
                   TextFormField(
                     key: const Key('inputUsername'),
-                    decoration: InputDecoration(
-                        //labelText: AppLocalizations.of(context)!.username,
+                    decoration: const InputDecoration(
+                        labelText: 'username',
                         errorMaxLines: 2,
-                        prefixIcon: const Icon(Icons.account_circle)),
+                        prefixIcon: Icon(Icons.account_circle)),
                     autofillHints: const [AutofillHints.username],
                     controller: _usernameController,
                     textInputAction: TextInputAction.next,
@@ -258,9 +260,9 @@ class _AuthCardState extends State<AuthCard> {
                   if (_authMode == AuthMode.Signup)
                     TextFormField(
                       key: const Key('inputEmail'),
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'email',
-                        prefixIcon: const Icon(Icons.mail),
+                        prefixIcon: Icon(Icons.mail),
                       ),
                       autofillHints: const [AutofillHints.email],
                       controller: _emailController,
@@ -349,7 +351,7 @@ class _AuthCardState extends State<AuthCard> {
                           flex: 3,
                           child: TextFormField(
                             key: const Key('inputServer'),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 // labelText: AppLocalizations.of(context)!
                                 //     .customServerUrl,
                                 // helperText: AppLocalizations.of(context)!
@@ -391,7 +393,7 @@ class _AuthCardState extends State<AuthCard> {
                                     : DEFAULT_SERVER_PROD;
                               },
                             ),
-                            Text('reset')
+                            const Text('reset')
                           ],
                         ),
                       ],

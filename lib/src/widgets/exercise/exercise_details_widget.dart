@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-import '../../resources/app_colors.dart';
-import '../../resources/app_constant.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_constant.dart';
 import '../../screens/reps/reps_record_screen.dart';
 
 class ExerciseDetailsWidget extends StatefulWidget {
@@ -41,7 +41,6 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget> {
   }
 
   Future<void> _loadCachedVideo() async {
-    print(widget.exerciseName);
     final fileInfo = await DefaultCacheManager().getSingleFile(
       '${AppConst.videoBaseUrl}${widget.selectedWorkout.toLowerCase()}/${widget.exerciseName.toLowerCase().replaceAll(' ', '_')}.mp4',
     );

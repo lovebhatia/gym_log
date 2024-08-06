@@ -4,7 +4,7 @@ import 'package:gym_log_exercise/src/providers/baseProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../helpers/consts.dart';
+import '../constants/consts.dart';
 
 class ExercisePerWorkoutService {
   Future<List<ExercisesPerWorkoutModel>> fetchExercisesPerWorkout(

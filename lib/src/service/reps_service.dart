@@ -4,25 +4,30 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../helpers/consts.dart';
+import '../constants/consts.dart';
 import '../providers/baseProvider.dart';
 
 class RepsService {
-  Future<void> createExerciseSet(Map<String, dynamic> data) async {
+  Future<bool> createExerciseSet(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final extractedUserData = json.decode(prefs.getString('userData')!);
     String token = extractedUserData['token'];
     final body = json.encode(data);
-    final response =
-        await http.post(Uri.parse('$DEFAULT_SERVER_PROD1/exercise-per-user'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Content-Type': 'application/json',
-            },
-            body: body);
+    final response = await http.post(
+      Uri.parse('$DEFAULT_SERVER_PROD1/exercise-per-user'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    );
 
     if (response.statusCode == 200) {
-    } else {}
+      print('in tru');
+      return true; // Success
+    } else {
+      return false; // Failure
+    }
   }
 
   Future<List<ExercisePerUserModel>> fetchExerciseSets(

@@ -1,13 +1,14 @@
-import '../../component/reusable_card.dart';
+import '../../common_component/reusable_card.dart';
 import '../../constants/constants.dart';
-import '../../resources/app_colors.dart';
+import '../../constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ResultsPage extends StatelessWidget {
-  ResultsPage(
-      {required this.interpretation,
+  const ResultsPage(
+      {super.key,
+      required this.interpretation,
       required this.bmiResult,
       required this.resultText});
 
@@ -24,7 +25,7 @@ class ResultsPage extends StatelessWidget {
           backgroundColor: AppColors.BLACK,
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.of(context).pop(),
             ),
             backgroundColor: AppColors.BLACK,
@@ -32,7 +33,7 @@ class ResultsPage extends StatelessWidget {
             title: Text(
               'BMI CALCULATOR',
               style: GoogleFonts.montserrat(
-                  textStyle: TextStyle(fontWeight: FontWeight.w600)),
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600)),
             ),
           ),
           body: Column(
@@ -57,7 +58,7 @@ class ResultsPage extends StatelessWidget {
               ),
               // SizedBox(height: 10.h,),
               ReusableCard(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                     colors: [AppColors.LIGHT_BLACK, AppColors.LIGHT_BLACK]),
                 cardChild: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -73,7 +74,7 @@ class ResultsPage extends StatelessWidget {
                     Text(
                       bmiResult,
                       style: GoogleFonts.montserrat(
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                             color: Colors.white,
                             fontSize: 100,
                             fontWeight: FontWeight.w800),
@@ -118,7 +119,7 @@ class ResultsPage extends StatelessWidget {
                     ),
                   ),
                   child: Ink(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           Color(0xffaa076b),

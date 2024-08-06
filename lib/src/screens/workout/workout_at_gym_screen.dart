@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gym_log_exercise/src/model/workout/workout_program_model.dart';
 import 'package:gym_log_exercise/src/service/workout_program_service.dart';
 import 'package:gym_log_exercise/src/widgets/workout/workout_grid_widget.dart';
-import '../../resources/app_colors.dart';
+import '../../constants/app_colors.dart';
 
 class WorkoutAtGymScreen extends StatefulWidget {
   const WorkoutAtGymScreen({super.key});
@@ -38,10 +38,12 @@ class _WorkoutAtGymScreenState extends State<WorkoutAtGymScreen> {
     return Scaffold(
       backgroundColor: AppColors.BLACK,
       appBar: AppBar(
+        /*
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        */
         backgroundColor: AppColors.BLACK,
         elevation: 0,
       ),

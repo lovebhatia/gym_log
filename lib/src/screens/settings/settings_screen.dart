@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,10 +8,12 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../providers/auth.dart';
-import '../../resources/app_colors.dart';
+import '../../constants/app_colors.dart';
 import '../home_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   // const SettingsScreen({Key? key}) : super(key: key);
 
   @override
@@ -23,7 +26,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri); // Correctly launch the URL
     } else {
-      print('Cannot launch $url');
+      if (kDebugMode) {
+        print('Cannot launch $url');
+      }
     }
   }
 
@@ -154,7 +159,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                           leading: Icon(
-                            Icons.share_rounded,
+                            Icons.logout_rounded,
                             color: Colors.white,
                             size: 30.sp,
                           ),

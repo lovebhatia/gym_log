@@ -3,7 +3,7 @@ import 'package:gym_log_exercise/src/providers/auth.dart';
 import 'package:gym_log_exercise/src/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'resources/app_colors.dart';
+import 'constants/app_colors.dart';
 import 'screens/auth_screen.dart';
 
 /// The Widget that configures your application.

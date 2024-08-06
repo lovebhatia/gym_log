@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gym_log_exercise/src/model/exercise/exercise_per_user_model.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../model/exercise/exercise_per_user_model.dart';
 import '../../model/exercise/rep_record_per_user_model.dart';
 import '../../service/reps_service.dart';
 import '../../widgets/reps/reps_record_widget.dart';
@@ -94,7 +94,26 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
       'date': formattedDate
     };
     final repsService = RepsService();
-    await repsService.createExerciseSet(dataToSend);
+    bool success = await repsService.createExerciseSet(dataToSend);
+
+    // Show a SnackBar based on success or failure
+    if (success) {
+      _showToast('Data Saved Successfully');
+    } else {
+      _showToast('Failed to save data. Please try again.');
+    }
+  }
+
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   Future<void> _fetchData() async {
@@ -111,17 +130,17 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
         weightControllers.clear();
         repsControllers.clear();
         rowData.clear();
+        bool hasValidData = false;
         for (var exerciseSet in exerciseSets) {
           for (var record in exerciseSet.exerciseSetRecords) {
             _addExistingRow(record);
+            if (record.reps != null || record.weight != null) {
+              hasValidData = true;
+            }
           }
         }
-        if (rowData.isEmpty && exerciseSetsHistory.isEmpty) {
+        if (!hasValidData) {
           for (int i = 0; i < 3; i++) {
-            _addRow();
-          }
-        } else {
-          for (int i = 0; i < 1; i++) {
             _addRow();
           }
         }
@@ -150,15 +169,15 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
   void _addExistingRow(RepsRecordPerUserModel record) {
     setState(() {
       Map<String, dynamic> newRowData = {
-        'weight': record.weight.toString(),
-        'reps': record.reps.toString(),
+        'weight': record.weight != null ? record.weight.toString() : '',
+        'reps': record.reps != null ? record.reps.toString() : '',
         'set': record.set
       };
       rowData.add(newRowData);
-      TextEditingController weightController =
-          TextEditingController(text: record.weight.toString());
-      TextEditingController repsController =
-          TextEditingController(text: record.reps.toString());
+      TextEditingController weightController = TextEditingController(
+          text: record.weight != null ? record.weight.toString() : '');
+      TextEditingController repsController = TextEditingController(
+          text: record.reps != null ? record.reps.toString() : '');
       weightControllers.add(weightController);
       repsControllers.add(repsController);
       rows.add(
@@ -178,15 +197,13 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
         width: 600,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              child: Column(
-                children: rows,
-              ),
+            Column(
+              children: rows,
             ),
             const SizedBox(height: 16),
             Row(

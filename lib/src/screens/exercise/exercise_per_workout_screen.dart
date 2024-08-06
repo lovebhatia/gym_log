@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_log_exercise/src/screens/exercise/exercise_details_screen.dart';
 import '../../animations/transitions.dart';
-import '../../resources/app_colors.dart';
+import '../../constants/app_colors.dart';
 import '../../model/exercise/exercise_per_workout_model.dart';
 import '../../service/exercise_per_workout_service.dart';
 import '../../widgets/exercise/exercise_header_details_widget.dart';

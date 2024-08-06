@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gym_log_exercise/src/widgets/exercise/exercise_details_widget.dart';
-import '../../resources/app_colors.dart';
-import '../../resources/app_constant.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_constant.dart';
 
 class ExerciseTileWidget extends StatelessWidget {
   final String exerciseName;

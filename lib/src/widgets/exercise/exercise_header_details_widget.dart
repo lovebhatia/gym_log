@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../resources/app_colors.dart';
+import '../../constants/app_colors.dart';
 
 class ExerciseHeaderDetailsWidget extends StatelessWidget {
   final String selectedDay;
@@ -19,7 +19,7 @@ class ExerciseHeaderDetailsWidget extends StatelessWidget {
       padding: EdgeInsets.only(top: 8.0.h),
       child: Center(
         child: Container(
-          height: 210.h,
+          height: 100.h,
           width: 350.w,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -60,7 +60,8 @@ class ExerciseHeaderDetailsWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 10.h),
+              /*
               ElevatedButton(
                 onPressed: onStartWorkout,
                 style: ElevatedButton.styleFrom(
@@ -97,6 +98,7 @@ class ExerciseHeaderDetailsWidget extends StatelessWidget {
                   ),
                 ),
               ),
+              */
             ],
           ),
         ),

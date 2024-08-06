@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gym_log_exercise/src/exceptions/httpException.dart';
-import 'package:gym_log_exercise/src/helpers/consts.dart';
+import 'package:gym_log_exercise/src/constants/consts.dart';
 import 'package:gym_log_exercise/src/providers/auth.dart';
 import 'package:gym_log_exercise/src/providers/launch_url.dart';
-import 'package:gym_log_exercise/src/resources/app_colors.dart';
+import 'package:gym_log_exercise/src/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 
 enum AuthMode {

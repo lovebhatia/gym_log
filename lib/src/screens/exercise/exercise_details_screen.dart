@@ -1,6 +1,6 @@
 import 'package:gym_log_exercise/src/model/exercise/exercise_per_workout_model.dart';
 
-import '../../resources/app_colors.dart';
+import '../../constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {

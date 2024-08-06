@@ -1,6 +1,8 @@
+import 'package:gym_log_exercise/src/screens/diet/diet_screen.dart';
 import 'package:gym_log_exercise/src/screens/exercise/exercise_history_screen.dart';
+import 'package:gym_log_exercise/src/screens/workout/workout_at_gym_screen.dart';
 
-import '../resources/app_colors.dart';
+import '../constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         index: 0,
         height: 60,
         items: <Widget>[
-          Icon(MyFlutterApp.dumbell, size: 31.sp, color: Colors.white),
+          Icon(Icons.fitness_center, size: 31.sp, color: Colors.white),
           Icon(Icons.food_bank_rounded, size: 32.5.sp, color: Colors.white),
           Icon(Icons.calculate_rounded, size: 30.sp, color: Colors.white),
           Icon(Icons.settings, size: 30.sp, color: Colors.white),
@@ -59,9 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
 _getPage(int page) {
   switch (page) {
     case 0:
-      return const WorkoutSelectionScreen();
+      return const WorkoutAtGymScreen();
     case 1:
-      return BMIScreen();
+      return DietScreen();
     case 2:
       return BMIScreen();
     case 3:

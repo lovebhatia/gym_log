@@ -5,7 +5,7 @@ import 'package:gym_log_exercise/src/providers/baseProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../helpers/consts.dart';
+import '../constants/consts.dart';
 
 class BmiService {
   Future<BMIModel> fetchBmiPerUser() async {
@@ -23,9 +23,6 @@ class BmiService {
     );
     if (response.statusCode == 200) {
       BMIModel bmiModel = jsonDecode(response.body);
-      print(response.body);
-      //BMIModel exercises =
-      //  data.map((json) => BMIModel.fromJson(json);
       return bmiModel;
     } else {
       throw Exception('Failed to load BMi');
