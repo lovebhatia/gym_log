@@ -22,12 +22,18 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   void customLaunch(String url) async {
-    Uri uri = Uri.parse(url); // Convert String to Uri
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri); // Correctly launch the URL
-    } else {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      } else {
+        if (kDebugMode) {
+          print('Cannot launch $url');
+        }
+      }
+    } catch (e) {
       if (kDebugMode) {
-        print('Cannot launch $url');
+        print('Error launching $url: $e');
       }
     }
   }
@@ -46,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                    top: 25.h,
+                    top: 45.h,
                   ),
                   child: Text(
                     'SETTINGS',
@@ -62,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: EdgeInsets.only(left: 28.0.w, right: 28.w),
                   child: Container(
                     padding: EdgeInsets.all(18.h),
-                    height: 500.h,
+                    height: 450.h,
                     width: 350.w,
                     decoration: BoxDecoration(
                       color: AppColors.LIGHT_BLACK,
@@ -82,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 31.h),
+                          padding: EdgeInsets.only(top: 10.h),
                           child: ListTile(
                             // tileColor: AppColors.BLACK,
                             title: Text(

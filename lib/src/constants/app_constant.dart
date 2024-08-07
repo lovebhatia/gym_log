@@ -6,7 +6,7 @@ class AppConst {
   static const String imageBaseUrl =
       'https://storage.googleapis.com/gym_fit_data/asset/images/';
   static const String videoBaseUrl =
-      'https://storage.googleapis.com/gym_fit_data/asset/videos1/';
+      'https://storage.googleapis.com/gym_fit_data/asset/videos/';
 
   // static const Color
 }

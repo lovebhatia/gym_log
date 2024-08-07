@@ -124,6 +124,7 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     try {
       List<ExercisePerUserModel> fetchedData =
           await exerciseService.fetchExerciseSets(widget.exerciseName, userId);
+      print('Fetched data: $fetchedData'); // Debug print
       setState(() {
         exerciseSets = fetchedData;
         rows = [];
@@ -169,17 +170,29 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
   void _addExistingRow(RepsRecordPerUserModel record) {
     setState(() {
       Map<String, dynamic> newRowData = {
-        'weight': record.weight != null ? record.weight.toString() : '',
-        'reps': record.reps != null ? record.reps.toString() : '',
+        'weight': record.weight != null && record.weight != 0.0
+            ? record.weight.toString()
+            : '',
+        'reps': record.reps != null && record.reps != 0
+            ? record.reps.toString()
+            : '',
         'set': record.set
       };
       rowData.add(newRowData);
+
+      // Initialize controllers with an empty string if the values are null or zero
       TextEditingController weightController = TextEditingController(
-          text: record.weight != null ? record.weight.toString() : '');
+          text: (record.weight != null && record.weight != 0.0)
+              ? record.weight.toString()
+              : '');
       TextEditingController repsController = TextEditingController(
-          text: record.reps != null ? record.reps.toString() : '');
+          text: (record.reps != null && record.reps != 0)
+              ? record.reps.toString()
+              : '');
+
       weightControllers.add(weightController);
       repsControllers.add(repsController);
+
       rows.add(
         RepsRecordWidget(
           index: record.set,

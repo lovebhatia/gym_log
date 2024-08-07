@@ -55,6 +55,8 @@ dependencies:
   intl: ^0.17.0
   flutter_cache_manager: ^3.3.0
   fluttertoast: ^8.0.9
+  google_sign_in: ^5.4.2
+  firebase_auth: ^5.1.4
 
 dev_dependencies:
   flutter_test:

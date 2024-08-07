@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "980733107546",
+    "project_id": "gymfit-34296",
+    "storage_bucket": "gymfit-34296.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980733107546:android:6a30a4ee14b1e7f556a763",
+        "android_client_info": {
+          "package_name": "com.example.gym_log_exercise"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9a2b0zgSHPeJKxZoJWnr65kD6gQla1Uc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
