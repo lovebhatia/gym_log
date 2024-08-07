@@ -193,6 +193,20 @@ class AuthProvider with ChangeNotifier {
       // Handle successful sign-in
       String? token = await userCredential.user!.getIdToken();
       String userId = userCredential.user!.uid;
+      print(userId + "--" + token!);
+      User? user = userCredential.user;
+
+if (user != null) {
+  String uid = user.uid;
+  String email = user.email ?? 'No email';
+  String displayName = user.displayName ?? 'No display name';
+  String photoURL = user.photoURL ?? 'No photo URL';
+  
+  print('UID: $uid');
+  print('Email: $email');
+  print('Display Name: $displayName');
+  print('Photo URL: $photoURL');
+}
       // Notify listeners about authentication state change
       notifyListeners();
 
