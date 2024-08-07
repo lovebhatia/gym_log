@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gym_log_exercise/src/exceptions/httpException.dart';
 import 'package:gym_log_exercise/src/constants/consts.dart';
 import 'package:gym_log_exercise/src/providers/make_uri.dart';
@@ -174,37 +172,6 @@ class AuthProvider with ChangeNotifier {
       return {'action': LoginActions.proceed};
     } catch (error) {
       rethrow;
-    }
-  }
-
-  Future<void> googleLogin(GoogleSignInAccount googleUser) async {
-    try {
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in with Firebase
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      // Handle successful sign-in
-      String? token = await userCredential.user!.getIdToken();
-      String userId = userCredential.user!.uid;
-      // Notify listeners about authentication state change
-      notifyListeners();
-
-      // Store login data in shared preferences (if needed)
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode({
-        'token': token,
-        'userId': userId,
-      });
-      prefs.setString('userData', userData);
-    } catch (error) {
-      throw error;
     }
   }
 

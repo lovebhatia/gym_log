@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gym_log_exercise/src/exceptions/httpException.dart';
 import 'package:gym_log_exercise/src/constants/consts.dart';
 import 'package:gym_log_exercise/src/providers/auth.dart';
@@ -25,7 +24,6 @@ class AuthCard extends StatefulWidget {
 class _AuthCardState extends State<AuthCard> {
   bool isObscure = true;
   bool confirmIsObscure = true;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final GlobalKey<FormState> _formKey = GlobalKey();
   bool _canRegister = true;
@@ -143,25 +141,6 @@ class _AuthCardState extends State<AuthCard> {
         _authMode = AuthMode.Login;
       });
       _preFillTextFields();
-    }
-  }
-
-  void _googleSignInHandler() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        //final credential = GoogleA
-        final AuthProvider authProvider =
-            Provider.of<AuthProvider>(context, listen: false);
-        await authProvider.googleLogin(googleUser);
-      }
-    } catch (error) {
-      // Handle error
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google Sign-In failed: $error')),
-      );
     }
   }
 
@@ -388,17 +367,6 @@ class _AuthCardState extends State<AuthCard> {
                     ),
                   ),
                   SizedBox(height: 0.025 * deviceSize.height),
-                  ElevatedButton(
-                    onPressed: _googleSignInHandler,
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(Icons.login),
-                        SizedBox(width: 10),
-                        Text('Sign in with Google'),
-                      ],
-                    ),
-                  ),
                   Builder(
                     key: const Key('toggleActionButton'),
                     builder: (context) {
