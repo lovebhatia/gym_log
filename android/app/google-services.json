@@ -12,7 +12,20 @@
           "package_name": "com.example.gym_log_exercise"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "980733107546-j8h0joksrh5pto7rkq5h1dbufl54c9e5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gym_log_exercise",
+            "certificate_hash": "7a213688afe0ac02ed926cf9839041e65a043706"
+          }
+        },
+        {
+          "client_id": "980733107546-g2gnmvpabsrev4n742gdjpvqqenqj8dd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB9a2b0zgSHPeJKxZoJWnr65kD6gQla1Uc"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980733107546-g2gnmvpabsrev4n742gdjpvqqenqj8dd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

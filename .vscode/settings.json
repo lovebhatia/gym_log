@@ -3,5 +3,6 @@
         "consts",
         "cupertino",
         "screenutil"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

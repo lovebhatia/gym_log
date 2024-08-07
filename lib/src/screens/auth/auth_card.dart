@@ -159,6 +159,7 @@ class _AuthCardState extends State<AuthCard> {
       }
     } catch (error) {
       // Handle error
+      print(error);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Google Sign-In failed: $error')),
       );

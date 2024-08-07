@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    
 }
 
 def localProperties = new Properties()
@@ -38,11 +39,13 @@ android {
         applicationId = "com.example.gym_log_exercise"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdk = flutter.minSdkVersion
+        minSdk = 23//flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
+
+   
 
     buildTypes {
         release {
@@ -51,8 +54,10 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+     
 }
 
 flutter {
     source = "../.."
 }
+
