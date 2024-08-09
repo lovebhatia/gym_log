@@ -261,6 +261,8 @@ if (user != null) {
 
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('userData');
+    await GoogleSignIn().disconnect();
+    FirebaseAuth.instance.signOut();
   }
 
   /// Returns the application name and version
