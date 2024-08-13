@@ -30,6 +30,8 @@ class AuthProvider with ChangeNotifier {
   static const SERVER_VERSION_URL = 'version';
   static const REGISTRATION_URL = 'register';
   static const LOGIN_URL = 'auth/login';
+    static const GOOGLE_LOGIN_URL = 'auth/login-with-google';
+
   late http.Client client;
 
   AuthProvider([http.Client? client, bool? checkMetadata]) {
@@ -177,50 +179,90 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> googleLogin(GoogleSignInAccount googleUser) async {
-    try {
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in with Firebase
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      // Handle successful sign-in
-      String? token = await userCredential.user!.getIdToken();
-      String userId = userCredential.user!.uid;
-      print(userId + "--" + token!);
-      User? user = userCredential.user;
-
-if (user != null) {
-  String uid = user.uid;
-  String email = user.email ?? 'No email';
-  String displayName = user.displayName ?? 'No display name';
-  String photoURL = user.photoURL ?? 'No photo URL';
   
-  print('UID: $uid');
-  print('Email: $email');
-  print('Display Name: $displayName');
-  print('Photo URL: $photoURL');
-}
-      // Notify listeners about authentication state change
-      notifyListeners();
 
-      // Store login data in shared preferences (if needed)
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode({
-        'token': token,
-        'userId': userId,
-      });
-      prefs.setString('userData', userData);
-    } catch (error) {
-      throw error;
+
+  Future<void> googleLogin(GoogleSignInAccount googleUser) async {
+  try {
+    print('Starting Google login');
+    
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    print('Google authentication retrieved');
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    print('Credential created');
+
+    // Sign in with Firebase
+    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    print('Signed in with Firebase');
+
+    final user = userCredential.user;
+    if (user == null) {
+      throw Exception('User is null after sign-in');
     }
+
+    final token = await user.getIdToken();
+    if (token == null) {
+      throw Exception('Failed to retrieve ID token');
+    }
+
+    final uid = user.uid;
+    final email = user.email ?? 'No email';
+    final displayName = user.displayName ?? 'No display name';
+    final photoURL = user.photoURL ?? 'No photo URL';
+
+    print('UID: $uid');
+    print('Email: $email');
+    print('Display Name: $displayName');
+    print('Photo URL: $photoURL');
+
+    final response = await client.post(
+      makeUri(DEFAULT_SERVER_PROD1, GOOGLE_LOGIN_URL),
+      headers: <String, String>{
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+        HttpHeaders.userAgentHeader: getAppNameHeader(),
+      },
+      body: json.encode({
+        'username': displayName,
+        'email': email,
+      }),
+    );
+    print('Response received');
+
+    final responseData = json.decode(response.body);
+    if (response.statusCode >= 400) {
+      throw CustomHttpException(responseData);
+    }
+
+    final accessToken = responseData['accessToken'] as String?;
+    if (accessToken == null) {
+      throw Exception('Access token is missing in the response');
+    }
+
+    //await initData(serverUrl!);
+    print('Data initialized');
+
+    // Notify listeners about authentication state change
+    notifyListeners();
+
+    // Store login data in shared preferences (if needed)
+    final prefs = await SharedPreferences.getInstance();
+    final userData = json.encode({
+      'token': accessToken,
+      'userId': responseData['userId'],
+    });
+    prefs.setString('userData', userData);
+    print('User data saved in shared preferences');
+
+  } catch (error) {
+    print('Error occurred: $error');
+    throw error;
   }
+}
+
 
   //Loads the latest server url from which the user succesfully logged in
   Future<String> getServerUrlFromPrefs() async {
