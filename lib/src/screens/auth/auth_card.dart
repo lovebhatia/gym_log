@@ -44,7 +44,7 @@ class _AuthCardState extends State<AuthCard> {
   final _password2Controller = TextEditingController();
   final _emailController = TextEditingController();
   final _serverUrlController = TextEditingController(
-      text: kDebugMode ? DEFAULT_SERVER_TEST : DEFAULT_SERVER_PROD);
+      text: kDebugMode ? DEFAULT_SERVER_TEST : DEFAULT_SERVER_PROD1);
 
   @override
   void initState() {
@@ -96,6 +96,7 @@ class _AuthCardState extends State<AuthCard> {
       //Login Existing users
       late Map<String, LoginActions> res;
       if (_authMode == AuthMode.Login) {
+        print("${_authData['username']!}-- ${_authData['password']!}--${_authData['serverUrl']!}");
         res = await Provider.of<AuthProvider>(context, listen: false).login(
             _authData['username']!,
             _authData['password']!,
@@ -129,7 +130,7 @@ class _AuthCardState extends State<AuthCard> {
 
   void _switchAuthMode() {
     if (!_canRegister) {
-      launchURL(DEFAULT_SERVER_PROD, context);
+      launchURL(DEFAULT_SERVER_PROD1, context);
       return;
     }
 
@@ -343,7 +344,7 @@ class _AuthCardState extends State<AuthCard> {
                               onPressed: () {
                                 _serverUrlController.text = kDebugMode
                                     ? DEFAULT_SERVER_TEST
-                                    : DEFAULT_SERVER_PROD;
+                                    : DEFAULT_SERVER_PROD1;
                               },
                             ),
                             const Text('reset')

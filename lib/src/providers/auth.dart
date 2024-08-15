@@ -134,8 +134,10 @@ class AuthProvider with ChangeNotifier {
 
   Future<Map<String, LoginActions>> login(
       String username, String password, String serverUrl) async {
+        print(username + "--"+ password +"--" +serverUrl);
     await logout(shouldNotify: false);
     try {
+      print("test1");
       final response = await client.post(
         makeUri(DEFAULT_SERVER_PROD1, LOGIN_URL),
         headers: <String, String>{
@@ -144,7 +146,9 @@ class AuthProvider with ChangeNotifier {
         },
         body: json.encode({'username': username, 'password': password}),
       );
+      print("test2");
       final responseData = json.decode(response.body);
+      print(responseData);
       if (response.statusCode >= 400) {
         throw CustomHttpException(responseData);
       }
@@ -175,6 +179,7 @@ class AuthProvider with ChangeNotifier {
       prefs.setString('lastServer', serverData);
       return {'action': LoginActions.proceed};
     } catch (error) {
+      print(error);
       rethrow;
     }
   }
@@ -268,7 +273,7 @@ class AuthProvider with ChangeNotifier {
   Future<String> getServerUrlFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('lastServer')) {
-      return DEFAULT_SERVER_PROD;
+      return DEFAULT_SERVER_PROD1;
     }
     final userData = json.decode(prefs.getString('lastServer')!);
     return userData['serverUrl'] as String;
@@ -292,7 +297,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout({bool shouldNotify = true}) async {
-    log('logging out');
+  try {
+    print('logging out');
     token = null;
     serverUrl = null;
     dataInit = false;
@@ -300,12 +306,31 @@ class AuthProvider with ChangeNotifier {
     if (shouldNotify) {
       notifyListeners();
     }
+    print('logging out 1');
 
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('userData');
-    await GoogleSignIn().disconnect();
-    FirebaseAuth.instance.signOut();
+
+    try {
+      final googleSignIn = GoogleSignIn();
+      if (googleSignIn.currentUser != null) {
+        await googleSignIn.disconnect();
+        print('User disconnected from Google');
+      } else {
+        print('User is not signed in');
+      }
+    } catch (error) {
+      print('Failed to disconnect from Google: $error');
+    }
+
+    await FirebaseAuth.instance.signOut();
+    print('logging out 2');
+  } catch (error) {
+    print('Logout error: $error');
   }
+}
+
+
 
   /// Returns the application name and version
   ///

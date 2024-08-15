@@ -1,7 +1,7 @@
 // ignore: constant_identifier_names
 // ignore_for_file: constant_identifier_names
 
-const DEFAULT_SERVER_PROD1 = 'http://10.0.2.2:8086/api';
+const DEFAULT_SERVER_PROD1 = 'https://midyear-courage-427209-f3.et.r.appspot.com/api';
 const DEFAULT_SERVER_TEST1 = 'http://10.0.2.2:8000/api';
 
 const DEFAULT_SERVER_PROD = 'https://wger.de';
