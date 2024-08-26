@@ -12,7 +12,6 @@ import 'package:gym_log_exercise/src/constants/consts.dart';
 import 'package:gym_log_exercise/src/providers/make_uri.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:android_metadata/android_metadata.dart';
 import 'package:version/version.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,7 +38,7 @@ class AuthProvider with ChangeNotifier {
     if (checkMetadata ?? true) {
       try {
         if (Platform.isAndroid) {
-          AndroidMetadata.metaDataAsMap.then((value) => metadata = value!);
+          //AndroidMetadata.metaDataAsMap.then((value) => metadata = value!);
         } else if (Platform.isLinux || Platform.isMacOS) {
           metadata = {
             MANIFEST_KEY_CHECK_UPDATE:
