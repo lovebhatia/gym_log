@@ -4,13 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:gym_log_exercise/src/exceptions/httpException.dart';
-import 'package:gym_log_exercise/src/constants/consts.dart';
-import 'package:gym_log_exercise/src/providers/auth.dart';
-import 'package:gym_log_exercise/src/providers/launch_url.dart';
-import 'package:gym_log_exercise/src/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/consts.dart';
+import '../../exceptions/httpException.dart';
+import '../../providers/auth.dart';
+import '../../providers/launch_url.dart';
 import 'auth_screen.dart';
 
 class AuthCard extends StatefulWidget {
