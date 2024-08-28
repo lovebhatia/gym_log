@@ -29,67 +29,77 @@ class ExerciseDetailsWidget extends StatefulWidget {
   _ExerciseDetailsWidgetState createState() => _ExerciseDetailsWidgetState();
 }
 
-class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget> {
+class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget>
+    with TickerProviderStateMixin {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
   bool _isVideoLoaded = false;
+  bool _isError = false;
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
     _loadCachedVideo();
   }
 
   Future<void> _loadCachedVideo() async {
-    final fileInfo = await DefaultCacheManager().getSingleFile(
-      '${AppConst.videoBaseUrl}${widget.selectedWorkout.toLowerCase()}/${widget.exerciseName.toLowerCase().replaceAll(' ', '_')}.mp4',
-    );
-    _controller = VideoPlayerController.file(fileInfo);
-    _initializeVideoPlayerFuture = _controller.initialize().then((_) {
-      setState(() {
-        _isVideoLoaded = true;
+    try {
+      final fileInfo = await DefaultCacheManager().getSingleFile(
+        '${AppConst.videoBaseUrl}${widget.selectedWorkout.toLowerCase()}/${widget.exerciseName.toLowerCase().replaceAll(' ', '_')}.mp4',
+      );
+      _controller = VideoPlayerController.file(fileInfo);
+      _initializeVideoPlayerFuture = _controller.initialize().then((_) {
+        setState(() {
+          _isVideoLoaded = true;
+        });
+        _animationController.forward();
+        _controller.play();
+        _controller.setLooping(true);
       });
-      _controller.play();
-      _controller.setLooping(true);
-    });
+    } catch (error) {
+      setState(() {
+        _isError = true;
+      });
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (_isVideoLoaded) {
+      _controller.dispose();
+    }
+    _animationController.dispose();
     super.dispose();
   }
 
   Widget _buildVideoPlayer() {
-    return FutureBuilder<void>(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return AspectRatio(
-            aspectRatio: 3 / 2,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16.0),
-              child: VideoPlayer(_controller),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      },
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16.0),
+      child: AspectRatio(
+        aspectRatio: 3 / 2,
+        child: VideoPlayer(_controller),
+      ),
     );
   }
 
   Widget _buildThumbnail() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16.0),
-      child: CachedNetworkImage(
-        imageUrl:
-            '${AppConst.ChestGifBaseUrl}${widget.selectedWorkout.toLowerCase()}/thumbnails/${widget.videoUrl}.jpg',
-        placeholder: (context, url) =>
-            const Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+      child: AspectRatio(
+        aspectRatio: 3 / 2,
+        child: CachedNetworkImage(
+          imageUrl:
+              '${AppConst.imageBaseUrl}${widget.selectedWorkout.toLowerCase()}/${widget.exerciseName.toLowerCase().replaceAll(' ', '_')}.jpg',
+          placeholder: (context, url) =>
+              const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -117,9 +127,15 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget> {
                     width: double.infinity,
                     height: MediaQuery.of(context).size.width *
                         (2 / 3), // 3:2 aspect ratio
-                    child: _isVideoLoaded
-                        ? _buildVideoPlayer()
-                        : _buildThumbnail(),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      child: _isVideoLoaded && !_isError
+                          ? FadeTransition(
+                              opacity: _animationController,
+                              child: _buildVideoPlayer(),
+                            )
+                          : _buildThumbnail(),
+                    ),
                   ),
                 ),
                 SizedBox(height: 10.h),
@@ -137,3 +153,6 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget> {
     );
   }
 }
+
+
+

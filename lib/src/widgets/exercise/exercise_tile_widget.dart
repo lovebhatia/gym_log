@@ -53,7 +53,7 @@ class ExerciseTileWidget extends StatelessWidget {
             style: GoogleFonts.lato(
               textStyle: const TextStyle(
                 color: Colors.white,
-                fontSize: 17,
+                fontSize: 14,
                 fontWeight: FontWeight.w800,
               ),
             ),
