@@ -9,18 +9,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../providers/auth.dart';
 import '../../constants/app_colors.dart';
+import '../../service/workout_program_service.dart';
 import '../home_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
-  // const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+
   void customLaunch(String url) async {
     try {
       final uri = Uri.parse(url);
@@ -38,8 +39,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _deleteAccountAndData() async {
+    try {
+      final fetchedExerciseDayList =
+          await WorkoutProgramService().deleteAccountAndData();
+     
+    } catch (error) {
+      if (kDebugMode) {
+        print("Error: $error");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+  final authProvider = Provider.of<AuthProvider>(context);
+
     return Container(
       color: AppColors.BLACK,
       child: SafeArea(
@@ -54,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: EdgeInsets.only(
                     top: 45.h,
                   ),
-                  child: Text(
+                  /*child: Text(
                     'SETTINGS',
                     style: GoogleFonts.bebasNeue(
                         fontSize: 35.sp,
@@ -62,6 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: Colors.white,
                         letterSpacing: 3),
                   ),
+                  */
                 ),
                 // SizedBox(height: 50.h),
                 Padding(
@@ -153,29 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 'Hey, This app is awesome for home workouts and diets.\nLet\'s get into shape together! Worth a try.\n\nDownload this app\nhttps://play.google.com/store/apps/details?id=com.weightloss.fluentfitness ');
                           }, //........................................
                         ),
-                        ListTile(
-                          // tileColor: AppColors.BLACK,
-                          title: Text(
-                            'Log Out',
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          leading: Icon(
-                            Icons.logout_rounded,
-                            color: Colors.white,
-                            size: 30.sp,
-                          ),
-                          onTap: () {
-                            context.read<AuthProvider>().logout();
-                            context.read<HomeScreen>();
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacementNamed('/');
-                          }, //........................................
-                        ),
+                        
                         ListTile(
                           // tileColor: AppColors.BLACK,
                           title: Text(
@@ -225,6 +219,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           */
                           }, //........................................
                         ),
+
+                        ListTile(
+                          // tileColor: AppColors.BLACK,
+                          title: Text(
+                            'Log Out',
+                            style: GoogleFonts.lato(
+                              textStyle: TextStyle(
+                                fontSize: 16.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          leading: Icon(
+                            Icons.logout_rounded,
+                            color: Colors.white,
+                            size: 30.sp,
+                          ),
+                          onTap: () {
+                            context.read<AuthProvider>().logout();
+                            context.read<HomeScreen>();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushReplacementNamed('/');
+                          }, //........................................
+                        ),
+                        ListTile(
+                          // tileColor: AppColors.BLACK,
+                          title: Text(
+                            'Delete Account and Data',
+                            style: GoogleFonts.lato(
+                              textStyle: TextStyle(
+                                fontSize: 16.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          leading: Padding(
+                            padding: EdgeInsets.only(left: 2.5.w),
+                            child: FaIcon(
+                              Icons.delete_forever_rounded,
+                              color: Colors.white,
+                              size: 30.sp,
+                            ),
+                          ),
+                          onTap: () async {
+                            await _deleteAccountAndData();
+                            context.read<AuthProvider>().logout();
+                            context.read<HomeScreen>();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushReplacementNamed('/');
+                          }, //........................................
+                        ),
+
+
                       ],
                     ),
                   ),

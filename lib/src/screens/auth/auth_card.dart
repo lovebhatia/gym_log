@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -191,9 +193,7 @@ void _showErrorToast(BuildContext context, String message) {
   }
 }
 
-
-
-  @override
+@override
 Widget build(BuildContext context) {
   final deviceSize = MediaQuery.of(context).size;
   return Card(
@@ -202,7 +202,7 @@ Widget build(BuildContext context) {
     ),
     elevation: 8.0,
     child: Padding(
-      padding: EdgeInsets.all(20.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
       child: Form(
         key: _formKey,
         child: AutofillGroup(
@@ -236,7 +236,7 @@ Widget build(BuildContext context) {
                   _authData['username'] = value!;
                 },
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
               if (_authMode == AuthMode.Signup)
                 TextFormField(
                   key: const Key('inputEmail'),
@@ -258,7 +258,7 @@ Widget build(BuildContext context) {
                     _authData['email'] = value!;
                   },
                 ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
               StatefulBuilder(builder: (context, updateState) {
                 return TextFormField(
                   key: const Key('inputPassword'),
@@ -290,7 +290,7 @@ Widget build(BuildContext context) {
                   },
                 );
               }),
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
               if (_authMode == AuthMode.Signup)
                 StatefulBuilder(builder: (context, updateState) {
                   return TextFormField(
@@ -318,8 +318,7 @@ Widget build(BuildContext context) {
                     },
                   );
                 }),
-              
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
               GestureDetector(
                 onTap: () {
                   if (!_isLoading) {
@@ -333,6 +332,13 @@ Widget build(BuildContext context) {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30.0),
                     color: Theme.of(context).primaryColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(0, 4),
+                        blurRadius: 10.0,
+                      ),
+                    ],
                   ),
                   child: Center(
                     child: _isLoading
@@ -344,43 +350,56 @@ Widget build(BuildContext context) {
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
+                              fontSize: 18.0,
                             ),
                           ),
                   ),
                 ),
               ),
               SizedBox(height: 20.0),
-              ElevatedButton.icon(
-  onPressed: _isGoogleSigningIn ? null : () async {
-    setState(() {
-      _isGoogleSigningIn = true;
-    });
+              if (Platform.isAndroid)
+                ElevatedButton.icon(
+                  onPressed: _isGoogleSigningIn ? null : () async {
+                    setState(() {
+                      _isGoogleSigningIn = true;
+                    });
 
-    try {
-      await _googleSignInHandler();
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isGoogleSigningIn = false;
-        });
-      }
-    }
-  },
-  icon: _isGoogleSigningIn
-      ? const SizedBox(
-          height: 24,
-          width: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.0,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
-        )
-      : const Icon(Icons.login),
-  label: _isGoogleSigningIn
-      ? const Text('Signing in...')
-      : const Text('Sign in with Google'),
-),
-
+                    try {
+                      await _googleSignInHandler();
+                    } finally {
+                      if (mounted) {
+                        setState(() {
+                          _isGoogleSigningIn = false;
+                        });
+                      }
+                    }
+                  },
+                  icon: _isGoogleSigningIn
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Icon(Icons.login),
+                  label: _isGoogleSigningIn
+                      ? const Text('Signing in...')
+                      : const Text('Sign in with Google'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               SizedBox(height: 20.0),
               GestureDetector(
                 onTap: () {
@@ -403,5 +422,6 @@ Widget build(BuildContext context) {
     ),
   );
 }
+
 
 }

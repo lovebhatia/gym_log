@@ -96,7 +96,6 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     final repsService = RepsService();
     bool success = await repsService.createExerciseSet(dataToSend);
 
-    // Show a SnackBar based on success or failure
     if (success) {
       _showToast('Data Saved Successfully');
     } else {
@@ -180,7 +179,6 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
       };
       rowData.add(newRowData);
 
-      // Initialize controllers with an empty string if the values are null or zero
       TextEditingController weightController = TextEditingController(
           text: (record.weight != null && record.weight != 0.0)
               ? record.weight.toString()
@@ -209,33 +207,56 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: SizedBox(
-        width: 600,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              children: rows,
+    return Scaffold(
+      backgroundColor: Colors.grey[900], // Dark background to avoid white space
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus(); // Hide the keyboard when tapping outside
+          },
+          child: SingleChildScrollView(
+             reverse: true,
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // Align items to the left
               children: [
-                ElevatedButton(
-                  onPressed: _addRow,
-                  child: const Text('Add More Sets'),
+                // Reps Input Section
+                Column(
+                  children: [
+                    ...rows,
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _addRow,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orangeAccent,
+                          ),
+                          child: const Text('Add More Sets'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: _sendDataToApi,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _sendDataToApi,
-                  child: const Text('Save'),
+                const SizedBox(height: 20),
+                // Reps History Section
+                RepsHistoryWidget(
+                  exerciseSetsHistory: exerciseSetsHistory,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            RepsHistoryWidget(exerciseSetsHistory: exerciseSetsHistory),
-          ],
+          ),
         ),
       ),
     );
