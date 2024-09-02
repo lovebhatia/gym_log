@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../constants/app_colors.dart';
 import '../../model/exercise/exercise_per_user_model.dart';
 import '../../model/exercise/rep_record_per_user_model.dart';
 import '../../service/reps_service.dart';
@@ -208,44 +209,45 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900], // Dark background to avoid white space
+      backgroundColor: AppColors.BLACK, // Dark background to avoid white space
       body: SafeArea(
         child: GestureDetector(
           onTap: () {
-            FocusScope.of(context).unfocus(); // Hide the keyboard when tapping outside
+            FocusScope.of(context)
+                .unfocus(); // Hide the keyboard when tapping outside
           },
           child: SingleChildScrollView(
-             reverse: true,
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
+            //reverse: true,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Align items to the left
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align items to the left
               children: [
                 // Reps Input Section
                 Column(
                   children: [
                     ...rows,
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _addRow,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orangeAccent,
+                    const SizedBox(height: 8),
+                  ],
+                ),
+                // Spacer to push buttons down if there's enough content
+                const SizedBox(height: 1),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _addRow,
+                      style: ElevatedButton.styleFrom(
+                          //backgroundColor: Colors.orangeAccent,
                           ),
-                          child: const Text('Add More Sets'),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: _sendDataToApi,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                      child: const Text('Add More Sets'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: _sendDataToApi,
+                      style: ElevatedButton.styleFrom(
+                          //backgroundColor: Colors.green,
                           ),
-                          child: const Text('Save'),
-                        ),
-                      ],
+                      child: const Text('Save'),
                     ),
                   ],
                 ),
