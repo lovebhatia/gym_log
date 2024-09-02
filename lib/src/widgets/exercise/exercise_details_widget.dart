@@ -108,13 +108,15 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).unfocus(); // Hide the keyboard when tapping outside
+        FocusScope.of(context)
+            .unfocus(); // Hide the keyboard when tapping outside
       },
       child: Scaffold(
         backgroundColor: AppColors.BLACK,
         body: GestureDetector(
           onTap: () {
-            FocusScope.of(context).unfocus(); // Hide the keyboard when tapping outside
+            FocusScope.of(context)
+                .unfocus(); // Hide the keyboard when tapping outside
           },
           child: Column(
             children: [
@@ -123,7 +125,8 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget>
                 onTap: () {
                   Navigator.of(context).pop(); // Close the screen
                 },
-                child: SizedBox(height: 80.h), // Adjust this height for the desired gap
+                child: SizedBox(
+                    height: 30.h), // Adjust this height for the desired gap
               ),
               // Video or Thumbnail with smaller height
               Container(
@@ -135,7 +138,7 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget>
                     : _buildThumbnail(),
               ),
               // RepsRecordScreen or any other content
-              SizedBox(height: 20.h),
+              SizedBox(height: 10.h),
               Expanded(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 25.w),
