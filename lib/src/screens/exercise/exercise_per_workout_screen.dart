@@ -69,6 +69,7 @@ class _ExercisePerWorkoutScreenState extends State<ExercisePerWorkoutScreen> {
             children: [
               ExerciseHeaderDetailsWidget(
                 selectedDay: widget.selectedDay,
+                totalExercises: exercisePerWorkoutList.length,
                 onStartWorkout: () {
                   Navigator.push(
                     context,

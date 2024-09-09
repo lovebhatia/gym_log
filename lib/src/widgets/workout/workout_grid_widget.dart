@@ -73,6 +73,7 @@ class _WorkoutGridState extends State<WorkoutGridWidget> {
                     builder: (context) => ExercisePerWorkoutScreen(
                       selectedDay: exercise.workout,
                       id: exercise.id.toString(),
+
                     ),
                   ),
                 );

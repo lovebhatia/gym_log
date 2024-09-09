@@ -126,7 +126,7 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget>
                   Navigator.of(context).pop(); // Close the screen
                 },
                 child: SizedBox(
-                    height: 30.h), // Adjust this height for the desired gap
+                    height: 60.h), // Adjust this height for the desired gap
               ),
               // Video or Thumbnail with smaller height
               Container(

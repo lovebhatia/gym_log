@@ -9,6 +9,7 @@ class RepsRecordWidget extends StatelessWidget {
   final ValueChanged<String> onWeightChanged;
   final ValueChanged<String> onRepsChanged;
 
+
   const RepsRecordWidget({
     super.key,
     required this.index,
@@ -16,6 +17,7 @@ class RepsRecordWidget extends StatelessWidget {
     required this.repsController,
     required this.onWeightChanged,
     required this.onRepsChanged,
+
   });
 
   @override

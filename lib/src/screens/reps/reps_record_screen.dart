@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gym_log_exercise/src/constants/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../constants/app_colors.dart';
 import '../../model/exercise/exercise_per_user_model.dart';
 import '../../model/exercise/rep_record_per_user_model.dart';
 import '../../service/reps_service.dart';
@@ -20,6 +20,8 @@ class RepsRecordScreen extends StatefulWidget {
 }
 
 class _RepsRecordScreenState extends State<RepsRecordScreen> {
+  ScrollController _scrollController = ScrollController();
+  final GlobalKey _buttonRowKey = GlobalKey();
   List<Widget> rows = [];
   int rowCount = 3; // Initial number of rows
   List<TextEditingController> weightControllers = [];
@@ -74,6 +76,11 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
         ),
       );
     });
+
+    // Scroll to the new row only if it's not fully visible
+    //WidgetsBinding.instance.addPostFrameCallback((_) {
+     // _scrollToNewRow();
+    //});
   }
 
   void _updateRowData(int index, String field, String value) {
@@ -124,7 +131,6 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     try {
       List<ExercisePerUserModel> fetchedData =
           await exerciseService.fetchExerciseSets(widget.exerciseName, userId);
-      print('Fetched data: $fetchedData'); // Debug print
       setState(() {
         exerciseSets = fetchedData;
         rows = [];
@@ -206,57 +212,61 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     });
   }
 
+  void _scrollToNewRow1() {
+    final scrollPosition = _scrollController.position;
+    final maxScrollExtent = scrollPosition.maxScrollExtent;
+
+    // Check if the last row is out of view
+    if (scrollPosition.pixels != maxScrollExtent) {
+      _scrollController.animateTo(
+        maxScrollExtent - 40, // Adjust the value to scroll just enough for the row to be visible
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.BLACK, // Dark background to avoid white space
+      backgroundColor: AppColors.BLACK,
+      resizeToAvoidBottomInset: true, // Ensure layout adjusts to keyboard
       body: SafeArea(
         child: GestureDetector(
           onTap: () {
-            FocusScope.of(context)
-                .unfocus(); // Hide the keyboard when tapping outside
+            FocusScope.of(context).unfocus(); // Hide keyboard on tap outside
           },
-          child: SingleChildScrollView(
-            //reverse: true,
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align items to the left
-              children: [
-                // Reps Input Section
-                Column(
-                  children: [
-                    ...rows,
-                    const SizedBox(height: 8),
-                  ],
-                ),
-                // Spacer to push buttons down if there's enough content
-                const SizedBox(height: 1),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _addRow,
-                      style: ElevatedButton.styleFrom(
-                          //backgroundColor: Colors.orangeAccent,
-                          ),
-                      child: const Text('Add More Sets'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: _sendDataToApi,
-                      style: ElevatedButton.styleFrom(
-                          //backgroundColor: Colors.green,
-                          ),
-                      child: const Text('Save'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                // Reps History Section
-                RepsHistoryWidget(
-                  exerciseSetsHistory: exerciseSetsHistory,
-                ),
-              ],
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  ...rows,
+                  const SizedBox(height: 16),
+                  Row(
+                    key: _buttonRowKey,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _addRow,
+                        child: const Text('Add More Sets'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: _sendDataToApi,
+                        child: const Text('Save'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  RepsHistoryWidget(
+                    exerciseSetsHistory: exerciseSetsHistory,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
