@@ -20,6 +20,7 @@ class RepsRecordScreen extends StatefulWidget {
 }
 
 class _RepsRecordScreenState extends State<RepsRecordScreen> {
+  bool _isLoading = false;
   ScrollController _scrollController = ScrollController();
   final GlobalKey _buttonRowKey = GlobalKey();
   List<Widget> rows = [];
@@ -77,10 +78,9 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
       );
     });
 
-    // Scroll to the new row only if it's not fully visible
-    //WidgetsBinding.instance.addPostFrameCallback((_) {
-     // _scrollToNewRow();
-    //});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToNewRow();
+    });
   }
 
   void _updateRowData(int index, String field, String value) {
@@ -90,6 +90,9 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
   }
 
   Future<void> _sendDataToApi() async {
+    setState(() {
+      _isLoading = true; // Hide the loading spinner when the API call is done
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final extractedUserData = json.decode(prefs.getString('userData')!);
     var userId = extractedUserData['userId'];
@@ -103,7 +106,9 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     };
     final repsService = RepsService();
     bool success = await repsService.createExerciseSet(dataToSend);
-
+    setState(() {
+      _isLoading = false; // Hide the loading spinner when the API call is done
+    });
     if (success) {
       _showToast('Data Saved Successfully');
     } else {
@@ -212,14 +217,18 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     });
   }
 
-  void _scrollToNewRow1() {
+  void _scrollToNewRow() {
     final scrollPosition = _scrollController.position;
     final maxScrollExtent = scrollPosition.maxScrollExtent;
+    int scrollNumber = 180;
+    if (exerciseSetsHistory.length == 0) {
+      scrollNumber = 0;
+    }
 
     // Check if the last row is out of view
     if (scrollPosition.pixels != maxScrollExtent) {
       _scrollController.animateTo(
-        maxScrollExtent - 40, // Adjust the value to scroll just enough for the row to be visible
+        maxScrollExtent - scrollNumber,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -256,9 +265,29 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: _sendDataToApi,
-                        child: const Text('Save'),
-                      ),
+                        onPressed: _isLoading
+                            ? null
+                            : _sendDataToApi, // Disable button when loading
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(context).primaryColor,
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          minimumSize: const Size(150,
+                              45), // Adjust the size of the button if needed
+                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : const Text(
+                                'Save',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                      )
                     ],
                   ),
                   const SizedBox(height: 16),
