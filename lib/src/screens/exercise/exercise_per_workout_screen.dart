@@ -6,6 +6,7 @@ import '../../model/exercise/exercise_per_workout_model.dart';
 import '../../service/exercise_per_workout_service.dart';
 import '../../widgets/exercise/exercise_header_details_widget.dart';
 import '../../widgets/exercise/exercise_list_widget.dart';
+import '../workout/start_workout_screen.dart';
 
 class ExercisePerWorkoutScreen extends StatefulWidget {
   final String selectedDay;
@@ -74,9 +75,10 @@ class _ExercisePerWorkoutScreenState extends State<ExercisePerWorkoutScreen> {
                   Navigator.push(
                     context,
                     UpTransition1(
-                      ExerciseDetailScreen(
+                      BeginnerStartWorkoutScreen(
                           exercisePerWorkoutList: exercisePerWorkoutList,
-                          selectedWorkout: widget.selectedDay),
+                          //selectedWorkout: widget.selectedDay
+                          ),
                     ),
                   );
                 },
