@@ -13,7 +13,7 @@ import '../../widgets/reps/reps_history_widget.dart';
 
 class RepsRecordScreen extends StatefulWidget {
   final String exerciseName;
-  const RepsRecordScreen({super.key, required this.exerciseName});
+  RepsRecordScreen({super.key, required this.exerciseName});
 
   @override
   _RepsRecordScreenState createState() => _RepsRecordScreenState();

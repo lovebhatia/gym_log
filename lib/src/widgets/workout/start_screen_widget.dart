@@ -1,312 +1,174 @@
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:achievement_view/achievement_view.dart';
-
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gym_log_exercise/src/model/exercise/exercise_per_workout_model.dart';
-import 'package:video_player/video_player.dart';
+import 'package:intl/intl.dart';
+import 'package:gym_log_exercise/src/widgets/exercise/exercise_list_widget.dart';
 
 import '../../constants/app_colors.dart';
-import '../../constants/app_constant.dart';
-import '../../screens/reps/reps_record_screen.dart';
 
 class BegWorkoutWidget extends StatefulWidget {
-  // const BegWorkoutWidget({ Key? key }) : super(key: key);
-  final List<ExercisesPerWorkoutModel> workoutExcercises;
+  final List<ExercisesPerWorkoutModel> workoutExercises;
+  final String selectedWorkout;
 
   BegWorkoutWidget({
-    required this.workoutExcercises,
+    required this.workoutExercises,
+    required this.selectedWorkout,
   });
 
   @override
   _BegWorkoutWidgetState createState() => _BegWorkoutWidgetState();
 }
 
-class _BegWorkoutWidgetState extends State<BegWorkoutWidget> {
-  bool isCircle = false;
-   late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
-  bool _isVideoLoaded = false;
-  bool _isError = false;
+class _BegWorkoutWidgetState extends State<BegWorkoutWidget> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  late ScrollController _scrollController;
 
+  // Track the currently selected index
+  int _selectedIndex = 15; // Set to 15 (today) by default
 
-  Widget _buildVideoPlayer() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16.0),
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: VideoPlayer(_controller),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize TabController and ScrollController
+    _tabController = TabController(length: 31, vsync: this, initialIndex: _selectedIndex); // 15th index is today
+    _scrollController = ScrollController();
+
+    // Automatically scroll to today's date after the frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToCurrentDate();
+    });
   }
 
-  Widget _buildThumbnail() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16.0),
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: CachedNetworkImage(
-          imageUrl:
-              '${AppConst.imageBaseUrl}${widget.selectedWorkout.toLowerCase()}/${widget.exerciseName.toLowerCase().replaceAll(' ', '_')}.jpg',
-          placeholder: (context, url) =>
-              const Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // Function to scroll to the current date (15th index)
+  void _scrollToCurrentDate() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _selectedIndex * 80.0, // Each item has a width of 80 pixels
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final PageController controller = PageController();
+    DateTime today = DateTime.now();
 
-    return PageView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      controller: controller,
-      itemCount: widget.workoutExcercises.length,
-      itemBuilder: (context, index) {
-        return SingleChildScrollView(
-          child: Container(
-            // height: size.size.height,
-            // width: size.size.width,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.DARK_PURPLE,
-                  AppColors.BRIGHT_PURPLE,
-                  // AppColors.LIGHT_BLACK,
-                  // AppColors.BLACK,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+    // Generate a list of 31 dates: 15 days before and 15 days after today
+    List<DateTime> dateRange = List.generate(31, (index) => today.subtract(Duration(days: 15 - index)));
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(17.h),
-                  height: 250.h,
-                  width: double.infinity,
-                  child: Card(
-                      elevation: 25,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      /* 
-                  child: Image(
-                    image: AssetImage(widget.workoutExcercises[index].gif),
-                  ), //...........................
-                  */
+            backgroundColor: AppColors.BLACK,
+            elevation: 0,
+          ),
+      
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: SizedBox(
+              height: 80,  // Height for the date cards
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: dateRange.length,
+                itemBuilder: (context, index) {
+                  DateTime date = dateRange[index];
+                  bool isToday = index == 15;
+                  bool isSelected = index == _selectedIndex;
 
-                      child: Image(
-                        image: NetworkImage('${AppConst.ChestGifBaseUrl}'
-                            '${widget.workoutExcercises[index].gifName}'),
-                      )),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(width: 30.w),
-                    Text(
-                      widget.workoutExcercises[index].exerciseName,
-                      style: GoogleFonts.poppins(
-                        textStyle: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25.sp,
-                        ),
-                      ),
-                    ),
-                    // SizedBox(width: size.size.width * 0.00001),
-
-                    /*
-                  IconButton(
-                    icon: Icon(
-                      Icons.info,
-                      size: 25.sp,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      showModalBottomSheet<dynamic>(
-                        isScrollControlled: true,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        context: context,
-                        builder: (BuildContext context) {
-                          return BegModalSheet(
-                            gif: widget.workoutExcercises[index].gif,
-                            sets: widget.workoutExcercises[index].sets,
-                            name_of_exercise: widget
-                                .workoutExcercises[index].name_of_exercise,
-                            description:
-                                widget.workoutExcercises[index].description,
-                          );
-                        },
-                      );
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedIndex = index;
+                        _tabController.index = index; // Update the tab to the selected date
+                      });
                     },
-                  ),
-                  */
-                  ],
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: 10.0.h, left: 27.w, right: 22.w),
-                  child: RepsRecordScreen(
-                      exerciseName:
-                          widget.workoutExcercises[index].exerciseName),
-                ),
-                /*
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.workoutExcercises[index].sets,
-                    style: GoogleFonts.montserrat(
-                      textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 65.sp,
-                          fontWeight: FontWeight.bold),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: isToday
+                            ? const Color(0xfff5af19)  // Highlight today's date
+                            : isSelected
+                                ? Colors.blueAccent  // Highlight selected date
+                                : Colors.grey[850],  // Default color for other dates
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: (isToday || isSelected)
+                            ? [
+                                BoxShadow(
+                                  color: (isToday ? Colors.orange : Colors.blueAccent).withOpacity(0.4),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            DateFormat('dd MMM').format(date),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: isToday || isSelected ? Colors.black : Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            DateFormat('EEE').format(date),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isToday || isSelected ? Colors.black : Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-
-              */
-                SizedBox(
-                  height: 20.h,
-                ),
-                /*
-              if (index == 0)
-                TimerButton(
-                  onPressed: (data) {
-                    // Handle the data here
-                    print("Data received: $data");
-                  },
-                ),
-              if (index == widget.workoutExcercises.length - 1)
-                TimerButton(
-                  onPressed: (data) {
-                    // Handle the data here
-                    print("Data received: $data");
-                  },
-                ),
-              if (index != 0 && index != widget.workoutExcercises.length - 1)
-                TimerButton(
-                  onPressed: (data) {
-                    // Handle the data here
-                    print("Data received: $data");
-                  },
-                ),
-
-                */
-                SizedBox(
-                  height: 10.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceBetween, // Align buttons at the ends
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        controller.previousPage(
-                            duration: Duration(milliseconds: 1000),
-                            curve: Curves.linearToEaseOut);
-                      },
-                      child: Text(
-                        'Back',
-                        style: GoogleFonts.lato(
-                          textStyle: TextStyle(
-                            fontSize: 20.sp,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    index == widget.workoutExcercises.length - 1
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              isCircle = true;
-                              show(context);
-                            },
-                            child: Text(
-                              'Exit',
-                              style: GoogleFonts.blinker(
-                                textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          )
-                        : TextButton(
-                            onPressed: () {
-                              controller.nextPage(
-                                  duration: Duration(milliseconds: 1000),
-                                  curve: Curves.linearToEaseOut);
-                            },
-                            child: Text(
-                              'Replace Exercise',
-                              style: GoogleFonts.lato(
-                                textStyle: TextStyle(
-                                  fontSize: 20.sp,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                    TextButton(
-                      onPressed: () {
-                        controller.nextPage(
-                            duration: Duration(milliseconds: 1000),
-                            curve: Curves.linearToEaseOut);
-                      },
-                      child: Text(
-                        'Next',
-                        style: GoogleFonts.lato(
-                          textStyle: TextStyle(
-                            fontSize: 20.sp,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
             ),
           ),
-        );
-      },
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: dateRange.map((date) {
+                // Filter exercises for the specific date
+                List<ExercisesPerWorkoutModel> filteredExercises = widget.workoutExercises
+                    .where((exercise) => _isExerciseForDate(exercise, date))
+                    .toList();
+
+                return ExerciseListWidget(
+                  exercises: filteredExercises,
+                  selectedWorkout: widget.selectedWorkout,
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  void show(BuildContext context) {
-    AchievementView(
-      alignment: Alignment.topCenter,
-      color: AppColors.LIGHT_BLACK,
-      // textStyleTitle: TextStyle(fontWeight: FontWeight.bold),
-      elevation: 50,
-      // icon: Icon(Icons.done_all),
-      duration: const Duration(milliseconds: 3000),
-      title: "Yeaaah!",
-      subTitle: "Training completed  ",
-      textStyleSubTitle: TextStyle(
-        fontSize: 12.0.sp,
-        // fontWeight: FontWeight.w600,
-      ),
-      isCircle: isCircle,
-    ).show(context);
+  // Function to determine if an exercise is for a specific date
+  bool _isExerciseForDate(ExercisesPerWorkoutModel exercise, DateTime date) {
+    // You need to implement this logic based on your exercise model and requirements.
+    // This example assumes that exercises have a date range or specific date logic.
+    return true; // Placeholder: Adjust according to your actual logic
   }
 }

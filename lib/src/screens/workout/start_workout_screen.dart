@@ -6,9 +6,11 @@ import '../../widgets/workout/start_screen_widget.dart';
 
 class BeginnerStartWorkoutScreen extends StatelessWidget {
   final List<ExercisesPerWorkoutModel> exercisePerWorkoutList;
+  final String selectedWorkout;
 
   BeginnerStartWorkoutScreen({
     required this.exercisePerWorkoutList,
+    required this.selectedWorkout
   });
 
   @override
@@ -36,7 +38,8 @@ class BeginnerStartWorkoutScreen extends StatelessWidget {
             elevation: 0,
           ),
           body: BegWorkoutWidget(
-            workoutExcercises: exercisePerWorkoutList,
+            workoutExercises: exercisePerWorkoutList,
+            selectedWorkout: selectedWorkout
           ),
         ),
       ),
