@@ -252,7 +252,7 @@ class _AuthCardState extends State<AuthCard> {
                     _authData['username'] = value!;
                   },
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: 10.0),
                 if (_authMode == AuthMode.Signup)
                   TextFormField(
                     key: const Key('inputEmail'),
@@ -274,7 +274,7 @@ class _AuthCardState extends State<AuthCard> {
                       _authData['email'] = value!;
                     },
                   ),
-                SizedBox(height: 20.0),
+                SizedBox(height: 10.0),
                 StatefulBuilder(builder: (context, updateState) {
                   return TextFormField(
                     key: const Key('inputPassword'),

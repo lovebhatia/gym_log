@@ -21,7 +21,7 @@ class ExerciseHeaderDetailsWidget extends StatelessWidget {
       padding: EdgeInsets.only(top: 8.0.h),
       child: Center(
         child: Container(
-          height: 210.h,
+          height: 170.h,
           width: 350.w,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -142,8 +142,8 @@ Text(
                   ),
                 ),
               ),
-              SizedBox(height: 24.h),
-              
+              //SizedBox(height: 24.h),
+              /*
               ElevatedButton(
                 onPressed: onStartWorkout,
                 style: ElevatedButton.styleFrom(
@@ -166,6 +166,7 @@ Text(
                     constraints:
                         BoxConstraints(minWidth: 108.w, minHeight: 36.0.h),
                     padding: EdgeInsets.all(12.h),
+                    
                     child: Text(
                       'START WORKOUT',
                       textAlign: TextAlign.center,
@@ -177,9 +178,11 @@ Text(
                         ),
                       ),
                     ),
+                    
                   ),
                 ),
               ),
+              */
             
             ],
           ),
