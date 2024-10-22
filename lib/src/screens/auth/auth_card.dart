@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -97,6 +98,13 @@ class _AuthCardState extends State<AuthCard> {
     });
 
     try {
+      // Check for internet connection
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        _showErrorToast(context, "No internet connection. Please try again.");
+        return;
+      }
+
       late Map<String, LoginActions> res;
       if (_authMode == AuthMode.Login) {
         res = await Provider.of<AuthProvider>(context, listen: false)
@@ -109,14 +117,13 @@ class _AuthCardState extends State<AuthCard> {
           throw TimeoutException('The server took too long to respond.');
         });
 
-        // Check for "Bad User Credentials" in the response
+        // Check for incorrect credentials
         if (res.containsKey("error") &&
             res["error"] == "Bad User Credentials") {
-          _showErrorToast(context, "Incorrect username and password.");
+          _showErrorToast(context, "Incorrect username or password.");
           return;
         }
       } else {
-        print("in register");
         res = await Provider.of<AuthProvider>(context, listen: false)
             .register(
           username: _authData['username']!,
@@ -129,22 +136,16 @@ class _AuthCardState extends State<AuthCard> {
         });
       }
     } on TimeoutException catch (_) {
+      // Handle server not responding
       _showErrorToast(
           context, "Server is not responding. Please try again later.");
     } on CustomHttpException catch (error) {
-      print("---" + error.toString());
-      // Show a specific toast message if "Bad User Credentials" is caught
       if (error.message == "Bad User Credentials") {
         _showErrorToast(context, "Incorrect username or password.");
       } else {
-        print('in catch error');
-        _showErrorToast(context, "Incorrect username or password.");
+        _showErrorToast(context, "An error occurred: ${error.message}");
       }
     } catch (error) {
-      print('in catch ' + error.toString());
-      if (error == 'Bad User Credentials') {
-        _showErrorToast(context, "Incorrect username or password.");
-      }
       _showErrorToast(
           context, "An unexpected error occurred. Please try again.");
     } finally {

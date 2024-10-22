@@ -67,6 +67,6 @@ _getPage(int page) {
     case 2:
       return BMIScreen();
     case 3:
-      return const SettingsScreen();
+      return SettingsScreen();
   }
 }
