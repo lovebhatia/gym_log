@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:gym_log_exercise/src/model/workout/workout_program_model.dart';
 import 'package:gym_log_exercise/src/service/workout_program_service.dart';
 import 'package:gym_log_exercise/src/widgets/workout/workout_grid_widget.dart';
+import '../../animations/transitions.dart';
 import '../../constants/app_colors.dart';
 
 class WorkoutAtGymScreen extends StatefulWidget {
@@ -32,6 +34,15 @@ class _WorkoutAtGymScreenState extends State<WorkoutAtGymScreen> {
       });
     } catch (error) {}
   }
+  final Map<String, IconData> backendIconMapping = {
+    'Push/Pull/Legs': Icons.fitness_center,
+    'Full Body': Icons.accessibility,
+    'Upper/Lower Split': Icons.swap_vert,
+    'Body Part Split': Icons.filter_frames,
+    'Cardiovascular': Icons.directions_run,
+    'Flexibility and Mobility': Icons.self_improvement,
+    'HIIT': Icons.timer,
+  };
 
   @override
   Widget build(BuildContext context) {

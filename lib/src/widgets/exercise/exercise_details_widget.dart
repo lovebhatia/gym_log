@@ -106,53 +106,51 @@ class _ExerciseDetailsWidgetState extends State<ExerciseDetailsWidget>
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            height: 500.h,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.BLACK, AppColors.LIGHT_BLACK],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context)
+            .unfocus(); // Hide the keyboard when tapping outside
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.BLACK,
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context)
+                .unfocus(); // Hide the keyboard when tapping outside
+          },
+          child: Column(
+            children: [
+              // Adding a GestureDetector around the gap above the video/thumbnail
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop(); // Close the screen
+                },
+                child: SizedBox(
+                    height: 60.h), // Adjust this height for the desired gap
               ),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-            ),
-            child: ListView(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 0.w),
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 5),
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.width *
-                        (2 / 3), // 3:2 aspect ratio
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      child: _isVideoLoaded && !_isError
-                          ? FadeTransition(
-                              opacity: _animationController,
-                              child: _buildVideoPlayer(),
-                            )
-                          : _buildThumbnail(),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                Padding(
+              // Video or Thumbnail with smaller height
+              Container(
+                height: 200.h, // Smaller height for the video/thumbnail
+                padding: const EdgeInsets.only(top: 5),
+                width: double.infinity,
+                child: _isVideoLoaded && !_isError
+                    ? _buildVideoPlayer()
+                    : _buildThumbnail(),
+              ),
+              // RepsRecordScreen or any other content
+              SizedBox(height: 10.h),
+              Expanded(
+                child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 25.w),
                   child: RepsRecordScreen(
                     exerciseName: widget.exerciseName,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
-
-
-

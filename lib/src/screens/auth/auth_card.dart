@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -85,69 +89,82 @@ class _AuthCardState extends State<AuthCard> {
   }
 
   void _submit(BuildContext context) async {
-  if (!_formKey.currentState!.validate()) {
-    return;
-  }
-  _formKey.currentState!.save();
-  setState(() {
-    _isLoading = true;
-  });
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
 
-  try {
-    late Map<String, LoginActions> res;
-    if (_authMode == AuthMode.Login) {
-      res = await Provider.of<AuthProvider>(context, listen: false).login(
-          _authData['username']!,
-          _authData['password']!,
-          _authData['serverUrl']!);
-      // Check for "Bad User Credentials" in the response
-      if (res.containsKey("error") && res["error"] == "Bad User Credentials") {
-        _showErrorToast(context, "Incorrect username and password.");
+    try {
+      // Check for internet connection
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        _showErrorToast(context, "No internet connection. Please try again.");
         return;
       }
 
-    } else {
-      res = await Provider.of(context, listen: false).register(
-        username: _authData['username']!,
-        password: _authData['password']!,
-        email: _authData['email']!,
-        serverUrl: _authData['serverUrl']!,
-      );
-    }
+      late Map<String, LoginActions> res;
+      if (_authMode == AuthMode.Login) {
+        res = await Provider.of<AuthProvider>(context, listen: false)
+            .login(
+          _authData['username']!,
+          _authData['password']!,
+          _authData['serverUrl']!,
+        )
+            .timeout(const Duration(seconds: 10), onTimeout: () {
+          throw TimeoutException('The server took too long to respond.');
+        });
 
-
-  } on CustomHttpException catch (error) {
-    print("---"+error.toString());
-    // Show a specific toast message if "Bad User Credentials" is caught
-    if (error.message == "Bad User Credentials") {
-      _showErrorToast(context, "Incorrect username or password.");
-    } else {
-      print('in catch error');
-      _showErrorToast(context, "Incorrect username or password.");
+        // Check for incorrect credentials
+        if (res.containsKey("error") &&
+            res["error"] == "Bad User Credentials") {
+          _showErrorToast(context, "Incorrect username or password.");
+          return;
+        }
+      } else {
+        res = await Provider.of<AuthProvider>(context, listen: false)
+            .register(
+          username: _authData['username']!,
+          password: _authData['password']!,
+          email: _authData['email']!,
+          serverUrl: _authData['serverUrl']!,
+        )
+            .timeout(const Duration(seconds: 10), onTimeout: () {
+          throw TimeoutException('The server took too long to respond.');
+        });
+      }
+    } on TimeoutException catch (_) {
+      // Handle server not responding
+      _showErrorToast(
+          context, "Server is not responding. Please try again later.");
+    } on CustomHttpException catch (error) {
+      if (error.message == "Bad User Credentials") {
+        _showErrorToast(context, "Incorrect username or password.");
+      } else {
+        _showErrorToast(context, "An error occurred: ${error.message}");
+      }
+    } catch (error) {
+      _showErrorToast(
+          context, "An unexpected error occurred. Please try again.");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-  } catch (error) {
-    print('in catch');
-    if(error == 'Bad User Credentials') {
-      _showErrorToast(context, "Incorrect username or password.");
-    }
-    _showErrorToast(context, "An unexpected error occurred. Please try again.");
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
   }
-}
 
-void _showErrorToast(BuildContext context, String message) {
-  Fluttertoast.showToast(
-    msg: message,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: Colors.red,
-    textColor: Colors.white,
-    fontSize: 16.0,
-  );
-}
+  void _showErrorToast(BuildContext context, String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
 
   void _switchAuthMode() {
     if (!_canRegister) {
@@ -169,239 +186,264 @@ void _showErrorToast(BuildContext context, String message) {
   }
 
   Future<void> _googleSignInHandler() async {
-  try {
-    setState(() {
-      _isGoogleSigningIn = true;
-    });
+    try {
+      setState(() {
+        _isGoogleSigningIn = true;
+      });
 
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.googleLogin(googleUser);
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final AuthProvider authProvider =
+            Provider.of<AuthProvider>(context, listen: false);
+        await authProvider.googleLogin(googleUser);
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Google Sign-In failed: $error')),
+      );
+    } finally {
+      setState(() {
+        _isGoogleSigningIn = false;
+      });
     }
-  } catch (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Google Sign-In failed: $error')),
-    );
-  } finally {
-    setState(() {
-      _isGoogleSigningIn = false;
-    });
   }
-}
-
-
 
   @override
-Widget build(BuildContext context) {
-  final deviceSize = MediaQuery.of(context).size;
-  return Card(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15.0),
-    ),
-    elevation: 8.0,
-    child: Padding(
-      padding: EdgeInsets.all(20.0),
-      child: Form(
-        key: _formKey,
-        child: AutofillGroup(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextFormField(
-                key: const Key('inputUsername'),
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  errorMaxLines: 2,
-                  prefixIcon: Icon(Icons.account_circle),
-                ),
-                autofillHints: const [AutofillHints.username],
-                controller: _usernameController,
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Invalid username';
-                  }
-                  if (!RegExp(r'^[\w.@+-]+$').hasMatch(value)) {
-                    return 'Only valid characters are allowed';
-                  }
-                  return null;
-                },
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny(RegExp(r'\s\b|\b\s')),
-                ],
-                onSaved: (value) {
-                  _authData['username'] = value!;
-                },
-              ),
-              SizedBox(height: 10.0),
-              if (_authMode == AuthMode.Signup)
+  Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      elevation: 8.0,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+        child: Form(
+          key: _formKey,
+          child: AutofillGroup(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
                 TextFormField(
-                  key: const Key('inputEmail'),
+                  key: const Key('inputUsername'),
                   decoration: const InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.mail),
+                    labelText: 'Username',
+                    errorMaxLines: 2,
+                    prefixIcon: Icon(Icons.account_circle),
                   ),
-                  autofillHints: const [AutofillHints.email],
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
+                  autofillHints: const [AutofillHints.username],
+                  controller: _usernameController,
                   textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value!.isNotEmpty && !value.contains('@')) {
-                      return 'Invalid email';
+                    if (value == null || value.isEmpty) {
+                      return 'Invalid username';
+                    }
+                    if (!RegExp(r'^[\w.@+-]+$').hasMatch(value)) {
+                      return 'Only valid characters are allowed';
                     }
                     return null;
                   },
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s\b|\b\s')),
+                  ],
                   onSaved: (value) {
-                    _authData['email'] = value!;
+                    _authData['username'] = value!;
                   },
                 ),
-              SizedBox(height: 10.0),
-              StatefulBuilder(builder: (context, updateState) {
-                return TextFormField(
-                  key: const Key('inputPassword'),
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(isObscure
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      onPressed: () {
-                        isObscure = !isObscure;
-                        updateState(() {});
-                      },
+                SizedBox(height: 10.0),
+                if (_authMode == AuthMode.Signup)
+                  TextFormField(
+                    key: const Key('inputEmail'),
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.mail),
                     ),
+                    autofillHints: const [AutofillHints.email],
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: (value) {
+                      if (value!.isNotEmpty && !value.contains('@')) {
+                        return 'Invalid email';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      _authData['email'] = value!;
+                    },
                   ),
-                  autofillHints: const [AutofillHints.password],
-                  obscureText: isObscure,
-                  controller: _passwordController,
-                  textInputAction: TextInputAction.next,
-                  validator: (value) {
-                    if (value!.isEmpty || value.length < 8) {
-                      return 'Password too short';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _authData['password'] = value!;
-                  },
-                );
-              }),
-              SizedBox(height: 10.0),
-              if (_authMode == AuthMode.Signup)
+                SizedBox(height: 10.0),
                 StatefulBuilder(builder: (context, updateState) {
                   return TextFormField(
-                    key: const Key('inputPassword2'),
+                    key: const Key('inputPassword'),
                     decoration: InputDecoration(
-                      labelText: 'Confirm Password',
+                      labelText: 'Password',
                       prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
-                        icon: Icon(confirmIsObscure
+                        icon: Icon(isObscure
                             ? Icons.visibility_off
                             : Icons.visibility),
                         onPressed: () {
-                          confirmIsObscure = !confirmIsObscure;
+                          isObscure = !isObscure;
                           updateState(() {});
                         },
                       ),
                     ),
-                    controller: _password2Controller,
-                    obscureText: confirmIsObscure,
+                    autofillHints: const [AutofillHints.password],
+                    obscureText: isObscure,
+                    controller: _passwordController,
+                    textInputAction: TextInputAction.next,
                     validator: (value) {
-                      if (value != _passwordController.text) {
-                        return 'Passwords don\'t match';
+                      if (value!.isEmpty || value.length < 8) {
+                        return 'Password too short';
                       }
                       return null;
                     },
+                    onSaved: (value) {
+                      _authData['password'] = value!;
+                    },
                   );
                 }),
-              
-              SizedBox(height: 10.0),
-              GestureDetector(
-                onTap: () {
-                  if (!_isLoading) {
-                    return _submit(context);
-                  }
-                },
-                child: Container(
-                  key: const Key('actionButton'),
-                  width: double.infinity,
-                  height: 0.065 * deviceSize.height,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.0),
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  child: Center(
-                    child: _isLoading
-                        ? const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(Colors.white),
-                          )
-                        : Text(
-                            _authMode == AuthMode.Login ? 'Login' : 'Register',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
+                SizedBox(height: 20.0),
+                if (_authMode == AuthMode.Signup)
+                  StatefulBuilder(builder: (context, updateState) {
+                    return TextFormField(
+                      key: const Key('inputPassword2'),
+                      decoration: InputDecoration(
+                        labelText: 'Confirm Password',
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(confirmIsObscure
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: () {
+                            confirmIsObscure = !confirmIsObscure;
+                            updateState(() {});
+                          },
+                        ),
+                      ),
+                      controller: _password2Controller,
+                      obscureText: confirmIsObscure,
+                      validator: (value) {
+                        if (value != _passwordController.text) {
+                          return 'Passwords don\'t match';
+                        }
+                        return null;
+                      },
+                    );
+                  }),
+                SizedBox(height: 20.0),
+                GestureDetector(
+                  onTap: () {
+                    if (!_isLoading) {
+                      return _submit(context);
+                    }
+                  },
+                  child: Container(
+                    key: const Key('actionButton'),
+                    width: double.infinity,
+                    height: 0.065 * deviceSize.height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.0),
+                      color: Theme.of(context).primaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          offset: Offset(0, 4),
+                          blurRadius: 10.0,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: _isLoading
+                          ? const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                            )
+                          : Text(
+                              _authMode == AuthMode.Login
+                                  ? 'Login'
+                                  : 'Register',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18.0,
+                              ),
                             ),
-                          ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20.0),
-              ElevatedButton.icon(
-  onPressed: _isGoogleSigningIn ? null : () async {
-    setState(() {
-      _isGoogleSigningIn = true;
-    });
+                SizedBox(height: 20.0),
+                if (Platform.isAndroid)
+                  SizedBox(
+                    width:
+                        250.0, // Makes the button take full width of the parent container
+                    child: ElevatedButton.icon(
+                      onPressed: _isGoogleSigningIn
+                          ? null
+                          : () async {
+                              setState(() {
+                                _isGoogleSigningIn = true;
+                              });
 
-    try {
-      await _googleSignInHandler();
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isGoogleSigningIn = false;
-        });
-      }
-    }
-  },
-  icon: _isGoogleSigningIn
-      ? const SizedBox(
-          height: 24,
-          width: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.0,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
-        )
-      : const Icon(Icons.login),
-  label: _isGoogleSigningIn
-      ? const Text('Signing in...')
-      : const Text('Sign in with Google'),
-),
-
-              SizedBox(height: 20.0),
-              GestureDetector(
-                onTap: () {
-                  _switchAuthMode();
-                },
-                child: Text(
-                  _authMode != AuthMode.Signup
-                      ? 'Don\'t have an account? Register'
-                      : 'Already have an account? Login',
-                  style: const TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
+                              try {
+                                await _googleSignInHandler();
+                              } finally {
+                                if (mounted) {
+                                  setState(() {
+                                    _isGoogleSigningIn = false;
+                                  });
+                                }
+                              }
+                            },
+                      icon: _isGoogleSigningIn
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.0,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Icon(Icons.login),
+                      label: _isGoogleSigningIn
+                          ? const Text('Signing in...')
+                          : const Text('Sign in with Google'),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        textStyle: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 20.0),
+                GestureDetector(
+                  onTap: () {
+                    _switchAuthMode();
+                  },
+                  child: Text(
+                    _authMode != AuthMode.Signup
+                        ? 'Don\'t have an account? Register'
+                        : 'Already have an account? Login',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

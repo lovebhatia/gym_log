@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:gym_log_exercise/src/screens/exercise/exercise_details_screen.dart';
+import 'package:gym_log_exercise/src/widgets/workout/start_screen_widget.dart';
 import '../../animations/transitions.dart';
 import '../../constants/app_colors.dart';
 import '../../model/exercise/exercise_per_workout_model.dart';
 import '../../service/exercise_per_workout_service.dart';
 import '../../widgets/exercise/exercise_header_details_widget.dart';
 import '../../widgets/exercise/exercise_list_widget.dart';
+import '../workout/start_workout_screen.dart';
 
 class ExercisePerWorkoutScreen extends StatefulWidget {
-  final String selectedDay;
+  final String selectedWorkout;
   final String id;
 
   const ExercisePerWorkoutScreen({
     super.key,
-    required this.selectedDay,
+    required this.selectedWorkout,
     required this.id,
   });
 
@@ -68,21 +70,23 @@ class _ExercisePerWorkoutScreenState extends State<ExercisePerWorkoutScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               ExerciseHeaderDetailsWidget(
-                selectedDay: widget.selectedDay,
+                selectedDay: widget.selectedWorkout,
+                totalExercises: exercisePerWorkoutList.length,
                 onStartWorkout: () {
                   Navigator.push(
                     context,
                     UpTransition1(
-                      ExerciseDetailScreen(
-                          exercisePerWorkoutList: exercisePerWorkoutList,
-                          selectedWorkout: widget.selectedDay),
+                      BegWorkoutWidget(
+                          workoutExercises: exercisePerWorkoutList,
+                          selectedWorkout: widget.selectedWorkout
+                          ),
                     ),
                   );
                 },
               ),
               ExerciseListWidget(
                   exercises: exercisePerWorkoutList,
-                  selectedWorkout: widget.selectedDay),
+                  selectedWorkout: widget.selectedWorkout),
             ],
           ),
         ),

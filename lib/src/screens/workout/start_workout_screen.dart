@@ -1,17 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:gym_log_exercise/src/model/exercise/exercise_per_workout_model.dart';
 
 import '../../constants/app_colors.dart';
-import 'package:flutter/material.dart';
+import '../../widgets/workout/start_screen_widget.dart';
 
-class ExerciseDetailScreen extends StatelessWidget {
+class BeginnerStartWorkoutScreen extends StatelessWidget {
   final List<ExercisesPerWorkoutModel> exercisePerWorkoutList;
   final String selectedWorkout;
 
-  const ExerciseDetailScreen(
-      {super.key,
-      required this.exercisePerWorkoutList,
-      required this.selectedWorkout
-            });
+  BeginnerStartWorkoutScreen({
+    required this.exercisePerWorkoutList,
+    required this.selectedWorkout
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +37,10 @@ class ExerciseDetailScreen extends StatelessWidget {
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
-          //body: ExerciseDetailScreen(
-          //exercisePerWorkoutList: exercisePerWorkoutList,
-          //),
+          body: BegWorkoutWidget(
+            workoutExercises: exercisePerWorkoutList,
+            selectedWorkout: selectedWorkout
+          ),
         ),
       ),
     );

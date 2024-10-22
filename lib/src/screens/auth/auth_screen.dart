@@ -34,33 +34,42 @@ class AuthScreen extends StatelessWidget {
                         height: 0.55 * deviceSize.height,
                       ),
                     ),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          const Image(
-                            image:
-                                NetworkImage('${AppConst.imageBaseUrl}beg.jpg'),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 20.0),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 94.0),
-                            child: const Text(
-                              'Gym fit',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
+                     Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        // Reduce image height here
+                        Container(
+                          height: 0.25 * deviceSize.height, // Reduce image height
+                          width: 0.8 * deviceSize.width, // Set width to fit the screen
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage('${AppConst.imageBaseUrl}beg.jpg'),
+                              fit: BoxFit.cover, // Adjust image scaling
                             ),
                           ),
-                          SizedBox(height: 0.025 * deviceSize.height),
-                          const AuthCard(), // No need for Flexible here
-                        ],
-                      ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 20.0),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, 
+                            horizontal: 94.0,
+                          ),
+                          child: const Text(
+                            'Gym&Fit',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 0.01 * deviceSize.height),
+                        const AuthCard(), // Keep as it is
+                      ],
                     ),
+                  ),
                   ],
                 ),
               ],

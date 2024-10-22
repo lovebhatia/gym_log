@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_log_exercise/src/model/workout/workout_model.dart';
+import 'package:gym_log_exercise/src/model/workout/workout_program_model.dart';
 import 'package:gym_log_exercise/src/screens/exercise/exercise_per_workout_screen.dart';
 import 'package:gym_log_exercise/src/service/workout_program_service.dart';
 import '../../constants/app_colors.dart';
@@ -15,11 +16,23 @@ class WorkoutGridWidget extends StatefulWidget {
 
 class _WorkoutGridState extends State<WorkoutGridWidget> {
   late List<WorkoutModel> workoutList = [];
+  late List<WorkoutProgramModel> displayedWorkoutProgram = [];
+
+  Future<void> _fetchWorkoutProgram() async {
+    try {
+      final fetchedWorkoutProgram =
+          await WorkoutProgramService().fetchWorkoutProgram();
+      setState(() {
+        displayedWorkoutProgram = fetchedWorkoutProgram;
+      });
+    } catch (error) {}
+  }
 
   @override
   void initState() {
     super.initState();
     _fetchExerciseDays();
+    _fetchWorkoutProgram();
   }
 
   Future<void> _fetchExerciseDays() async {
@@ -71,7 +84,7 @@ class _WorkoutGridState extends State<WorkoutGridWidget> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ExercisePerWorkoutScreen(
-                      selectedDay: exercise.workout,
+                      selectedWorkout : exercise.workout,
                       id: exercise.id.toString(),
                     ),
                   ),

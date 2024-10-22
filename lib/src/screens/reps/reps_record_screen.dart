@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gym_log_exercise/src/constants/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../model/exercise/exercise_per_user_model.dart';
@@ -12,13 +13,16 @@ import '../../widgets/reps/reps_history_widget.dart';
 
 class RepsRecordScreen extends StatefulWidget {
   final String exerciseName;
-  const RepsRecordScreen({super.key, required this.exerciseName});
+  RepsRecordScreen({super.key, required this.exerciseName});
 
   @override
   _RepsRecordScreenState createState() => _RepsRecordScreenState();
 }
 
 class _RepsRecordScreenState extends State<RepsRecordScreen> {
+  bool _isLoading = false;
+  ScrollController _scrollController = ScrollController();
+  final GlobalKey _buttonRowKey = GlobalKey();
   List<Widget> rows = [];
   int rowCount = 3; // Initial number of rows
   List<TextEditingController> weightControllers = [];
@@ -73,6 +77,10 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
         ),
       );
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToNewRow();
+    });
   }
 
   void _updateRowData(int index, String field, String value) {
@@ -82,6 +90,9 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
   }
 
   Future<void> _sendDataToApi() async {
+    setState(() {
+      _isLoading = true; // Hide the loading spinner when the API call is done
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final extractedUserData = json.decode(prefs.getString('userData')!);
     var userId = extractedUserData['userId'];
@@ -95,8 +106,9 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     };
     final repsService = RepsService();
     bool success = await repsService.createExerciseSet(dataToSend);
-
-    // Show a SnackBar based on success or failure
+    setState(() {
+      _isLoading = false; // Hide the loading spinner when the API call is done
+    });
     if (success) {
       _showToast('Data Saved Successfully');
     } else {
@@ -124,7 +136,6 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     try {
       List<ExercisePerUserModel> fetchedData =
           await exerciseService.fetchExerciseSets(widget.exerciseName, userId);
-      print('Fetched data: $fetchedData'); // Debug print
       setState(() {
         exerciseSets = fetchedData;
         rows = [];
@@ -180,7 +191,6 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
       };
       rowData.add(newRowData);
 
-      // Initialize controllers with an empty string if the values are null or zero
       TextEditingController weightController = TextEditingController(
           text: (record.weight != null && record.weight != 0.0)
               ? record.weight.toString()
@@ -207,35 +217,87 @@ class _RepsRecordScreenState extends State<RepsRecordScreen> {
     });
   }
 
+  void _scrollToNewRow() {
+    final scrollPosition = _scrollController.position;
+    final maxScrollExtent = scrollPosition.maxScrollExtent;
+    int scrollNumber = 180;
+    if (exerciseSetsHistory.length == 0) {
+      scrollNumber = 0;
+    }
+
+    // Check if the last row is out of view
+    if (scrollPosition.pixels != maxScrollExtent) {
+      _scrollController.animateTo(
+        maxScrollExtent - scrollNumber,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: SizedBox(
-        width: 600,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              children: rows,
+    return Scaffold(
+      backgroundColor: AppColors.BLACK,
+      resizeToAvoidBottomInset: true, // Ensure layout adjusts to keyboard
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus(); // Hide keyboard on tap outside
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: _addRow,
-                  child: const Text('Add More Sets'),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _sendDataToApi,
-                  child: const Text('Save'),
-                ),
-              ],
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  ...rows,
+                  const SizedBox(height: 16),
+                  Row(
+                    key: _buttonRowKey,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _addRow,
+                        child: const Text('Add More Sets'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : _sendDataToApi, // Disable button when loading
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(context).primaryColor,
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          minimumSize: const Size(150,
+                              45), // Adjust the size of the button if needed
+                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : const Text(
+                                'Save',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  RepsHistoryWidget(
+                    exerciseSetsHistory: exerciseSetsHistory,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            RepsHistoryWidget(exerciseSetsHistory: exerciseSetsHistory),
-          ],
+          ),
         ),
       ),
     );

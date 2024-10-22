@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:gym_log_exercise/src/model/workout/workout_model.dart';
 import 'package:gym_log_exercise/src/model/workout/workout_program_model.dart';
 import 'package:gym_log_exercise/src/providers/baseProvider.dart';
@@ -52,4 +53,32 @@ class WorkoutProgramService {
       throw Exception('Failed to load exerciseDay');
     }
   }
+
+  Future<void> deleteAccountAndData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final extractedUserData = json.decode(prefs.getString('userData')!);
+    var userId = extractedUserData['userId'];
+    try {
+      final response = await http.get(Uri.parse('$DEFAULT_SERVER_PROD1/account/delete'));
+
+      if (response.statusCode == 200) {
+        // Handle successful deletion if necessary
+        if (kDebugMode) {
+          print("Account and data deleted successfully.");
+        }
+      } else {
+        // Handle failure response
+        if (kDebugMode) {
+          print("Failed to delete account and data: ${response.statusCode}");
+        }
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print("Error: $error");
+      }
+    }
+  }
+
+
+
 }

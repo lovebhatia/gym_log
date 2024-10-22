@@ -1,26 +1,29 @@
 import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../../providers/auth.dart';
 import '../../constants/app_colors.dart';
-import '../home_screen.dart';
+import '../../providers/auth.dart';
+import '../../service/workout_program_service.dart';
+import '../home_screen.dart'; // Ensure AppColors class is defined.
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
-
-  // const SettingsScreen({Key? key}) : super(key: key);
-
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  bool _isSaveVisible = false;
+  bool _isProfileExpanded = false;
+
   void customLaunch(String url) async {
     try {
       final uri = Uri.parse(url);
@@ -38,222 +41,304 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.BLACK,
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: AppColors.BLACK,
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 45.h,
-                  ),
-                  child: Text(
-                    'SETTINGS',
-                    style: GoogleFonts.bebasNeue(
-                        fontSize: 35.sp,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        letterSpacing: 3),
-                  ),
-                ),
-                // SizedBox(height: 50.h),
-                Padding(
-                  padding: EdgeInsets.only(left: 28.0.w, right: 28.w),
-                  child: Container(
-                    padding: EdgeInsets.all(18.h),
-                    height: 450.h,
-                    width: 350.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.LIGHT_BLACK,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          'Support Us',
-                          style: GoogleFonts.montserrat(
-                            textStyle: TextStyle(
-                              color: Colors.white,
-                              fontSize: 23.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10.h),
-                          child: ListTile(
-                            // tileColor: AppColors.BLACK,
-                            title: Text(
-                              'Rate Us',
-                              style: GoogleFonts.lato(
-                                textStyle: TextStyle(
-                                  fontSize: 16.sp,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            leading: Icon(
-                              Icons.rate_review_rounded,
-                              color: Colors.white,
-                              size: 30.sp,
-                            ),
-                            onTap: () {
-                              customLaunch(
-                                  'https://play.google.com/store/apps/details?id=com.weightloss.fluentfitness');
-                            }, //........................................
-                          ),
-                        ),
-                        ListTile(
-                          // tileColor: AppColors.BLACK,
-                          title: Text(
-                            'Feedback',
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          leading: Icon(
-                            Icons.feedback_rounded,
-                            color: Colors.white,
-                            size: 30.sp,
-                          ),
-                          onTap: () {
-                            customLaunch(
-                                'mailto:fluentfitness9@gmail.com?subject=Feedback on Fluent Fitness App');
-                          }, //........................................
-                        ),
-                        ListTile(
-                          // tileColor: AppColors.BLACK,
-                          title: Text(
-                            'Share with Friends',
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          leading: Icon(
-                            Icons.share_rounded,
-                            color: Colors.white,
-                            size: 30.sp,
-                          ),
-                          onTap: () {
-                            Share.share(
-                                'Hey, This app is awesome for home workouts and diets.\nLet\'s get into shape together! Worth a try.\n\nDownload this app\nhttps://play.google.com/store/apps/details?id=com.weightloss.fluentfitness ');
-                          }, //........................................
-                        ),
-                        ListTile(
-                          // tileColor: AppColors.BLACK,
-                          title: Text(
-                            'Log Out',
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          leading: Icon(
-                            Icons.logout_rounded,
-                            color: Colors.white,
-                            size: 30.sp,
-                          ),
-                          onTap: () {
-                            context.read<AuthProvider>().logout();
-                            context.read<HomeScreen>();
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacementNamed('/');
-                          }, //........................................
-                        ),
-                        ListTile(
-                          // tileColor: AppColors.BLACK,
-                          title: Text(
-                            'Follow us on Instagram',
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          leading: Padding(
-                            padding: EdgeInsets.only(left: 2.5.w),
-                            child: FaIcon(
-                              FontAwesomeIcons.instagram,
-                              color: Colors.white,
-                              size: 30.sp,
-                            ),
-                          ),
-                          onTap: () {
-                            customLaunch(
-                                'https://www.instagram.com/fluentfitness_/');
-                          }, //........................................
-                        ),
-                        ListTile(
-                          // tileColor: AppColors.BLACK,
-                          title: Text(
-                            'Terms & Conditions',
-                            style: GoogleFonts.lato(
-                              textStyle: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          leading: Icon(
-                            Icons.privacy_tip_rounded,
-                            color: Colors.white,
-                            size: 30.sp,
-                          ),
-                          onTap: () {
-                            /*
-                          Navigator.push(
-                            context,
-                            SlideLeftTransition(TermsScreen()),
-                          );
-                          */
-                          }, //........................................
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+  Future<void> _deleteAccountAndData() async {
+    try {
+      final fetchedExerciseDayList =
+          await WorkoutProgramService().deleteAccountAndData();
+    } catch (error) {
+      if (kDebugMode) {
+        print("Error: $error");
+      }
+    }
+  }
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+  void _toggleSaveButton(String value) {
+    setState(() {
+      _isSaveVisible = _usernameController.text.isNotEmpty ||
+          _emailController.text.isNotEmpty ||
+          _passwordController.text.isNotEmpty;
+    });
+  }
+
+  Widget _buildProfileField({
+    required String label,
+    required TextEditingController controller,
+    bool obscureText = false,
+    required Function(String) onChanged,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.lato(
+              textStyle: TextStyle(fontSize: 14.sp, color: Colors.white),
+            ),
+          ),
+          SizedBox(height: 5.h),
+          TextField(
+            controller: controller,
+            obscureText: obscureText,
+            style: GoogleFonts.lato(
+              textStyle: TextStyle(fontSize: 14.sp, color: Colors.white),
+            ),
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileExpansionTile() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.LIGHT_BLACK,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ExpansionTile(
+          leading: Icon(
+            Icons.person,
+            color: Colors.white,
+            size: 30.sp,
+          ),
+          title: Text(
+            'Profile Summary',
+            style: GoogleFonts.lato(
+              textStyle: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          trailing: Icon(
+            _isProfileExpanded
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down,
+            color: Colors.white,
+            size: 28.sp,
+          ),
+          initiallyExpanded: _isProfileExpanded,
+          onExpansionChanged: (bool expanded) {
+            setState(() {
+              _isProfileExpanded = expanded;
+            });
+          },
+          children: [
+            // Add the Save Changes button at the top-right of the expanded tile
+            Stack(
+              children: [
+                // Profile Fields
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'You nice! Keep going',
-                      style: GoogleFonts.bebasNeue(
-                          textStyle: TextStyle(
-                              color: Colors.white60, fontSize: 17.sp)),
+                    _buildProfileField(
+                      label: 'Username',
+                      controller: _usernameController,
+                      onChanged: _toggleSaveButton,
                     ),
-                    SizedBox(
-                      width: 5.w,
+                    Divider(color: Colors.grey[600]),
+                    _buildProfileField(
+                      label: 'Email',
+                      controller: _emailController,
+                      onChanged: _toggleSaveButton,
                     ),
-                    Icon(
-                      Icons.favorite,
-                      size: 20.sp,
-                      color: Colors.deepPurpleAccent,
-                    )
+                    Divider(color: Colors.grey[600]),
+                    _buildProfileField(
+                      label: 'Password',
+                      controller: _passwordController,
+                      obscureText: true,
+                      onChanged: _toggleSaveButton,
+                    ),
                   ],
                 ),
+                // Save button positioned on the top-right of the expanded section
+                if (_isSaveVisible)
+                  Positioned(
+                    top: 0,
+                    right: 10.w,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Save functionality here
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurpleAccent,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 15.w, vertical: 8.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text(
+                        'Save',
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2.h), // Adjust padding if needed
+      child: SizedBox(
+        height: 40.h, // Reduced height for the ListTile
+        width: double.infinity, // Full width
+        child: ListTile(
+          onTap: onTap,
+          leading: Icon(
+            icon,
+            color: Colors.white,
+            size: 18.sp, // Slightly smaller icon size
+          ),
+          title: Text(
+            label,
+            style: GoogleFonts.lato(
+              textStyle: TextStyle(
+                fontSize: 16.sp, // Slightly smaller text size
+                color: Colors.white,
+              ),
+            ),
+          ),
+          tileColor: AppColors.LIGHT_BLACK, // Background color
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 12.w, // Adjust horizontal padding if necessary
+            vertical: 0.h, // Minimized vertical padding to center content
           ),
         ),
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.DARK_BACKGROUND,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 80.h), // Added gap above profile
+              _buildProfileExpansionTile(),
+              SizedBox(height: 15.h),
+              Text(
+                'Settings',
+                style: GoogleFonts.lato(
+                  textStyle: TextStyle(
+                    fontSize: 18.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.h),
+              _buildSettingsTile(
+                icon: Icons.star_rate,
+                label: 'Rate Us',
+                onTap: () {
+                  customLaunch(
+                      'https://play.google.com/store/apps/details?id=com.weightloss.fluentfitness');
+                },
+              ),
+              _buildSettingsTile(
+                icon: Icons.feedback,
+                label: 'Feedback',
+                onTap: () {
+                  customLaunch(
+                      'mailto:fluentfitness9@gmail.com?subject=Feedback on Fluent Fitness App');
+                },
+              ),
+              _buildSettingsTile(
+                icon: Icons.share,
+                label: 'Share with Friends',
+                onTap: () {
+                  Share.share(
+                      'Hey, This app is awesome for home workouts and diets.\nLet\'s get into shape together! Worth a try.\n\nDownload this app\nhttps://play.google.com/store/apps/details?id=com.weightloss.fluentfitness ');
+                },
+              ),
+              _buildSettingsTile(
+                icon: FontAwesomeIcons.instagram,
+                label: 'Follow us on Instagram',
+                onTap: () {
+                  customLaunch('https://www.instagram.com/fluentfitness_/');
+                },
+              ),
+              _buildSettingsTile(
+                icon: Icons.privacy_tip_rounded,
+                label: 'Terms & Condition',
+                onTap: () {
+                  customLaunch('https://www.instagram.com/fluentfitness_/');
+                },
+              ),
+              _buildSettingsTile(
+                icon: Icons.logout,
+                label: 'Log Out',
+                onTap: () {
+                  context.read<AuthProvider>().logout();
+                  context.read<HomeScreen>();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacementNamed('/');
+                },
+              ),
+              _buildSettingsTile(
+                icon: Icons.delete,
+                label: 'Delete Account',
+                onTap: () async {
+                  await _deleteAccountAndData();
+                  context.read<AuthProvider>().logout();
+                  context.read<HomeScreen>();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacementNamed('/');
+                },
+              ),
+              SizedBox(height: 30.h),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(
+    ScreenUtilInit(
+      designSize: const Size(360, 690),
+      builder: (context, child) => MaterialApp(
+        home: SettingsScreen(),
+      ),
+    ),
+  );
 }

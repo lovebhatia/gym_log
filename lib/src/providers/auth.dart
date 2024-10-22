@@ -28,9 +28,9 @@ class AuthProvider with ChangeNotifier {
 
   static const MIN_APP_VERSION_URL = 'min-app-version';
   static const SERVER_VERSION_URL = 'version';
-  static const REGISTRATION_URL = 'register';
+  static const REGISTRATION_URL = 'auth/register';
   static const LOGIN_URL = 'auth/login';
-    static const GOOGLE_LOGIN_URL = 'auth/login-with-google';
+  static const GOOGLE_LOGIN_URL = 'auth/login-with-google';
 
   late http.Client client;
 
@@ -96,7 +96,7 @@ class AuthProvider with ChangeNotifier {
       {required String username,
       required String password,
       required String email,
-      required String serverurl}) async {
+      required String serverUrl}) async {
     try {
       final Map<String, String> data = {
         'username': username,
@@ -106,7 +106,7 @@ class AuthProvider with ChangeNotifier {
         data['email'] = email;
       }
       final response = await client.post(
-        makeUri(serverurl, REGISTRATION_URL),
+        makeUri(DEFAULT_SERVER_PROD1, REGISTRATION_URL),
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
           HttpHeaders.authorizationHeader:
@@ -126,7 +126,7 @@ class AuthProvider with ChangeNotifier {
         return {'action': LoginActions.update};
       }
 
-      return login(username, password, serverurl);
+      return login(username, password, serverUrl);
     } catch (error) {
       rethrow;
     }
@@ -134,7 +134,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<Map<String, LoginActions>> login(
       String username, String password, String serverUrl) async {
-        print(username + "--"+ password +"--" +serverUrl);
+    print(username + "--" + password + "--" + serverUrl);
     await logout(shouldNotify: false);
     try {
       print("test1");
@@ -184,90 +184,87 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  
-
-
   Future<void> googleLogin(GoogleSignInAccount googleUser) async {
-  try {
-    print('Starting Google login');
-    
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    print('Google authentication retrieved');
+    try {
+      print('Starting Google login');
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    print('Credential created');
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      print('Google authentication retrieved');
 
-    // Sign in with Firebase
-    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-    print('Signed in with Firebase');
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      print('Credential created');
 
-    final user = userCredential.user;
-    if (user == null) {
-      throw Exception('User is null after sign-in');
+      // Sign in with Firebase
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      print('Signed in with Firebase');
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw Exception('User is null after sign-in');
+      }
+
+      final token = await user.getIdToken();
+      if (token == null) {
+        throw Exception('Failed to retrieve ID token');
+      }
+
+      final uid = user.uid;
+      final email = user.email ?? 'No email';
+      final displayName = user.displayName ?? 'No display name';
+      final photoURL = user.photoURL ?? 'No photo URL';
+
+      print('UID: $uid');
+      print('Email: $email');
+      print('Display Name: $displayName');
+      print('Photo URL: $photoURL');
+
+      final response = await client.post(
+        makeUri(DEFAULT_SERVER_PROD1, GOOGLE_LOGIN_URL),
+        headers: <String, String>{
+          HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+          HttpHeaders.userAgentHeader: getAppNameHeader(),
+        },
+        body: json.encode({
+          'username': displayName,
+          'email': email,
+        }),
+      );
+      print('Response received');
+
+      final responseData = json.decode(response.body);
+      if (response.statusCode >= 400) {
+        throw CustomHttpException(responseData);
+      }
+
+      final accessToken = responseData['accessToken'] as String?;
+      if (accessToken == null) {
+        throw Exception('Access token is missing in the response');
+      }
+
+      //await initData(serverUrl!);
+      print('Data initialized');
+
+      // Notify listeners about authentication state change
+      notifyListeners();
+
+      // Store login data in shared preferences (if needed)
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({
+        'token': accessToken,
+        'userId': responseData['userId'],
+      });
+      prefs.setString('userData', userData);
+      print('User data saved in shared preferences');
+    } catch (error) {
+      print('Error occurred: $error');
+      throw error;
     }
-
-    final token = await user.getIdToken();
-    if (token == null) {
-      throw Exception('Failed to retrieve ID token');
-    }
-
-    final uid = user.uid;
-    final email = user.email ?? 'No email';
-    final displayName = user.displayName ?? 'No display name';
-    final photoURL = user.photoURL ?? 'No photo URL';
-
-    print('UID: $uid');
-    print('Email: $email');
-    print('Display Name: $displayName');
-    print('Photo URL: $photoURL');
-
-    final response = await client.post(
-      makeUri(DEFAULT_SERVER_PROD1, GOOGLE_LOGIN_URL),
-      headers: <String, String>{
-        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
-        HttpHeaders.userAgentHeader: getAppNameHeader(),
-      },
-      body: json.encode({
-        'username': displayName,
-        'email': email,
-      }),
-    );
-    print('Response received');
-
-    final responseData = json.decode(response.body);
-    if (response.statusCode >= 400) {
-      throw CustomHttpException(responseData);
-    }
-
-    final accessToken = responseData['accessToken'] as String?;
-    if (accessToken == null) {
-      throw Exception('Access token is missing in the response');
-    }
-
-    //await initData(serverUrl!);
-    print('Data initialized');
-
-    // Notify listeners about authentication state change
-    notifyListeners();
-
-    // Store login data in shared preferences (if needed)
-    final prefs = await SharedPreferences.getInstance();
-    final userData = json.encode({
-      'token': accessToken,
-      'userId': responseData['userId'],
-    });
-    prefs.setString('userData', userData);
-    print('User data saved in shared preferences');
-
-  } catch (error) {
-    print('Error occurred: $error');
-    throw error;
   }
-}
-
 
   //Loads the latest server url from which the user succesfully logged in
   Future<String> getServerUrlFromPrefs() async {
@@ -297,40 +294,38 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout({bool shouldNotify = true}) async {
-  try {
-    print('logging out');
-    token = null;
-    serverUrl = null;
-    dataInit = false;
-
-    if (shouldNotify) {
-      notifyListeners();
-    }
-    print('logging out 1');
-
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove('userData');
-
     try {
-      final googleSignIn = GoogleSignIn();
-      if (googleSignIn.currentUser != null) {
-        await googleSignIn.disconnect();
-        print('User disconnected from Google');
-      } else {
-        print('User is not signed in');
+      print('logging out');
+      token = null;
+      serverUrl = null;
+      dataInit = false;
+
+      if (shouldNotify) {
+        notifyListeners();
       }
+      print('logging out 1');
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.remove('userData');
+
+      try {
+        final googleSignIn = GoogleSignIn();
+        if (googleSignIn.currentUser != null) {
+          await googleSignIn.disconnect();
+          print('User disconnected from Google');
+        } else {
+          print('User is not signed in');
+        }
+      } catch (error) {
+        print('Failed to disconnect from Google: $error');
+      }
+
+      await FirebaseAuth.instance.signOut();
+      print('logging out 2');
     } catch (error) {
-      print('Failed to disconnect from Google: $error');
+      print('Logout error: $error');
     }
-
-    await FirebaseAuth.instance.signOut();
-    print('logging out 2');
-  } catch (error) {
-    print('Logout error: $error');
   }
-}
-
-
 
   /// Returns the application name and version
   ///
