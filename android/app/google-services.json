@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:980733107546:android:6a30a4ee14b1e7f556a763",
         "android_client_info": {
-          "package_name": "com.example.gym_log_exercise"
+          "package_name": "com.gym_log.gym_log_exercise"
         }
       },
       "oauth_client": [],
