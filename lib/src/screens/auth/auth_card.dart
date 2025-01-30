@@ -140,11 +140,9 @@ class _AuthCardState extends State<AuthCard> {
       _showErrorToast(
           context, "Server is not responding. Please try again later.");
     } on CustomHttpException catch (error) {
-      if (error.message == "Bad User Credentials") {
-        _showErrorToast(context, "Incorrect username or password.");
-      } else {
+     
         _showErrorToast(context, "An error occurred: ${error.message}");
-      }
+  
     } catch (error) {
       _showErrorToast(
           context, "An unexpected error occurred. Please try again.");
@@ -185,30 +183,43 @@ class _AuthCardState extends State<AuthCard> {
     }
   }
 
-  Future<void> _googleSignInHandler() async {
-    try {
-      setState(() {
-        _isGoogleSigningIn = true;
-      });
 
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final AuthProvider authProvider =
-            Provider.of<AuthProvider>(context, listen: false);
-        await authProvider.googleLogin(googleUser);
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google Sign-In failed: $error')),
-      );
-    } finally {
-      setState(() {
-        _isGoogleSigningIn = false;
-      });
+Future<void> _googleSignInHandler() async {
+  try {
+    setState(() {
+      _isGoogleSigningIn = true;
+    });
+    print('Google Sign-In process started.');
+
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser != null) {
+      print('Google Sign-In successful: ${googleUser.email}');
+      
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      print('Authentication successful. Access token: ${googleAuth.accessToken}');
+      
+      final AuthProvider authProvider =
+          Provider.of<AuthProvider>(context, listen: false);
+      
+      await authProvider.googleLogin(googleUser);
+      print('Google login processed through AuthProvider.');
+    } else {
+      print('Google Sign-In cancelled by user.');
     }
+  } catch (error, stacktrace) {
+    print('Google Sign-In failed with error: $error');
+    print('Stacktrace: $stacktrace');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Google Sign-In failed: $error')),
+    );
+  } finally {
+    setState(() {
+      _isGoogleSigningIn = false;
+    });
+    print('Google Sign-In process ended.');
   }
+}
 
   @override
   Widget build(BuildContext context) {

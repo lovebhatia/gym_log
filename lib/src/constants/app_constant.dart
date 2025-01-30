@@ -4,9 +4,11 @@ class AppConst {
   static const String ChestGifBaseUrl =
       'https://storage.googleapis.com/gymfit_drive/asset/gifs/';
   static const String imageBaseUrl =
-      'https://storage.googleapis.com/gymfit_drive/asset/images/';
+      'https://gymfitbucket.s3.eu-north-1.amazonaws.com/asset/images/';
   static const String videoBaseUrl =
-      'https://storage.googleapis.com/gymfit_drive/asset/videos/';
+      'https://gymfitbucket.s3.eu-north-1.amazonaws.com/asset/videos/';
 
   // static const Color
 }
+
+
