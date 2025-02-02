@@ -5,7 +5,7 @@ import 'package:gym_log_exercise/src/model/workout/workout_program_model.dart';
 class WorkoutCard extends StatelessWidget {
   final WorkoutProgramModel workoutProgram;
 
-  const WorkoutCard({required this.workoutProgram, Key? key}) : super(key: key);
+  const WorkoutCard({required this.workoutProgram, super.key});
 
   @override
   Widget build(BuildContext context) {

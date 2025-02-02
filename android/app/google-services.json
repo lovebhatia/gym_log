@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "980733107546",
-    "project_id": "gymfit-34296",
-    "storage_bucket": "gymfit-34296.appspot.com"
+    "project_number": "594667926903",
+    "project_id": "gymfitfluttersignin",
+    "storage_bucket": "gymfitfluttersignin.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980733107546:android:6a30a4ee14b1e7f556a763",
+        "mobilesdk_app_id": "1:594667926903:android:58c3e5cce7fd12c7bc5d72",
         "android_client_info": {
           "package_name": "com.gym_log.gym_log_exercise"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "594667926903-in8ltju66h7pqkgpaaq5605kssf3fo6v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gym_log.gym_log_exercise",
+            "certificate_hash": "4d2c49da16fa4ab5a3cd3e11992e4495e5e2fc3e"
+          }
+        },
+        {
+          "client_id": "594667926903-ub9md7clstbhdh8fhk8u0sakgsbef11u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyB9a2b0zgSHPeJKxZoJWnr65kD6gQla1Uc"
+          "current_key": "AIzaSyAaUTHVLBUlZ3fTjJrTdYgeTiTvTsGOzIk"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594667926903-ub9md7clstbhdh8fhk8u0sakgsbef11u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gym_log_exercise/src/model/workout/workout_program_model.dart';
 import 'package:gym_log_exercise/src/service/workout_program_service.dart';
+import 'package:gym_log_exercise/src/widgets/workout/workout_card_widget.dart';
 import 'package:gym_log_exercise/src/widgets/workout/workout_grid_widget.dart';
 import '../../animations/transitions.dart';
 import '../../constants/app_colors.dart';
@@ -34,6 +35,7 @@ class _WorkoutAtGymScreenState extends State<WorkoutAtGymScreen> {
       });
     } catch (error) {}
   }
+
   final Map<String, IconData> backendIconMapping = {
     'Push/Pull/Legs': Icons.fitness_center,
     'Full Body': Icons.accessibility,
@@ -49,12 +51,6 @@ class _WorkoutAtGymScreenState extends State<WorkoutAtGymScreen> {
     return Scaffold(
       backgroundColor: AppColors.BLACK,
       appBar: AppBar(
-        /*
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        */
         backgroundColor: AppColors.BLACK,
         elevation: 0,
       ),
@@ -67,6 +63,21 @@ class _WorkoutAtGymScreenState extends State<WorkoutAtGymScreen> {
             children: [
               const WorkoutGridWidget(), //showing normal  workout and exercise
               SizedBox(height: 20.h),
+              SizedBox(
+                height: 200.h, // Adjust height as needed
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: displayedWorkoutProgram.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 15.w),
+                      child: WorkoutCard(
+                        workoutProgram: displayedWorkoutProgram[index],
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
