@@ -78,8 +78,7 @@ class _ExercisePerWorkoutScreenState extends State<ExercisePerWorkoutScreen> {
                     UpTransition1(
                       BegWorkoutWidget(
                           workoutExercises: exercisePerWorkoutList,
-                          selectedWorkout: widget.selectedWorkout
-                          ),
+                          selectedWorkout: widget.selectedWorkout),
                     ),
                   );
                 },
