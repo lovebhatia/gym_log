@@ -8,12 +8,11 @@ class ExerciseHeaderDetailsWidget extends StatelessWidget {
   final VoidCallback onStartWorkout;
   final int totalExercises;
 
-  const ExerciseHeaderDetailsWidget({
-    super.key,
-    required this.selectedDay,
-    required this.onStartWorkout,
-    required this.totalExercises
-  });
+  const ExerciseHeaderDetailsWidget(
+      {super.key,
+      required this.selectedDay,
+      required this.onStartWorkout,
+      required this.totalExercises});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,7 @@ class ExerciseHeaderDetailsWidget extends StatelessWidget {
       padding: EdgeInsets.only(top: 8.0.h),
       child: Center(
         child: Container(
-          height: 170.h,
+          height: 200.h,
           width: 350.w,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -51,99 +50,97 @@ class ExerciseHeaderDetailsWidget extends StatelessWidget {
               SizedBox(height: 20.h),
               Padding(
                 padding: EdgeInsets.only(left: 12.w, right: 12.w),
-                child:  IntrinsicHeight(
+                child: IntrinsicHeight(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Column(
                         children: [
                           Text(
-  totalExercises.toString(),  // Convert int to String
-  style: GoogleFonts.montserrat(
-    textStyle: TextStyle(
-      color: Colors.white,
-      fontSize: 15.sp,
-      fontWeight: FontWeight.w600,
-    ),
-  ),
-),
-Text(
-                                      'Exercises',
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                    ),
+                            totalExercises.toString(), // Convert int to String
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Exercises',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                       VerticalDivider(
-                                  color: Colors.white,
-                                  thickness: 2,
-                                  width: 2.w,
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      "40 mins",
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      'Total Time',
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                VerticalDivider(
-                                  color: Colors.white,
-                                  thickness: 2,
-                                  width: 2.w,
-                                ),
-                           Column(
-                                  children: [
-                                    Text(
-                                      "1 min",
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      'Rest Time',
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                    ),
-                                    
-                                  ],
-                                ),     
+                      VerticalDivider(
+                        color: Colors.white,
+                        thickness: 2,
+                        width: 2.w,
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "40 mins",
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Total Time',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      VerticalDivider(
+                        color: Colors.white,
+                        thickness: 2,
+                        width: 2.w,
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "1 min",
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Rest Time',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
               ),
-              //SizedBox(height: 24.h),
-              /*
+              SizedBox(height: 24.h),
               ElevatedButton(
                 onPressed: onStartWorkout,
                 style: ElevatedButton.styleFrom(
@@ -166,7 +163,6 @@ Text(
                     constraints:
                         BoxConstraints(minWidth: 108.w, minHeight: 36.0.h),
                     padding: EdgeInsets.all(12.h),
-                    
                     child: Text(
                       'START WORKOUT',
                       textAlign: TextAlign.center,
@@ -178,12 +174,9 @@ Text(
                         ),
                       ),
                     ),
-                    
                   ),
                 ),
               ),
-              */
-            
             ],
           ),
         ),

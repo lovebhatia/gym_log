@@ -61,22 +61,47 @@ class _WorkoutAtGymScreenState extends State<WorkoutAtGymScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const WorkoutGridWidget(), //showing normal  workout and exercise
+              const WorkoutGridWidget(), // Normal workouts and exercises
               SizedBox(height: 20.h),
-              SizedBox(
-                height: 200.h, // Adjust height as needed
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: displayedWorkoutProgram.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(right: 15.w),
-                      child: WorkoutCard(
-                        workoutProgram: displayedWorkoutProgram[index],
+
+              // Creating a List where each item is a Row containing a horizontal scroll of 3 items
+              ListView.builder(
+                shrinkWrap: true, // Important to fit inside Column
+                physics:
+                    const NeverScrollableScrollPhysics(), // Prevents vertical scrolling inside this ListView
+                itemCount: (displayedWorkoutProgram.length / 4)
+                    .ceil(), // Number of rows
+                itemBuilder: (context, rowIndex) {
+                  int startIndex = rowIndex * 4;
+                  int endIndex = startIndex + 4;
+                  if (endIndex > displayedWorkoutProgram.length) {
+                    endIndex = displayedWorkoutProgram.length;
+                  }
+
+                  return Padding(
+                    padding:
+                        EdgeInsets.only(bottom: 15.h), // Space between rows
+                    child: SizedBox(
+                      height: 70.h, // Adjust height for cards
+                      child: ListView.builder(
+                        scrollDirection:
+                            Axis.horizontal, // Enables horizontal scrolling
+                        itemCount:
+                            endIndex - startIndex, // Only valid items in row
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                right: 15.w), // Space between cards
+                            child: WorkoutCard(
+                              workoutProgram:
+                                  displayedWorkoutProgram[startIndex + index],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
