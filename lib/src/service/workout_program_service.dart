@@ -59,7 +59,8 @@ class WorkoutProgramService {
     final extractedUserData = json.decode(prefs.getString('userData')!);
     var userId = extractedUserData['userId'];
     try {
-      final response = await http.get(Uri.parse('$DEFAULT_SERVER_PROD1/account/delete'));
+      final response =
+          await http.get(Uri.parse('$DEFAULT_SERVER_PROD1/account/delete'));
 
       if (response.statusCode == 200) {
         // Handle successful deletion if necessary
@@ -78,7 +79,4 @@ class WorkoutProgramService {
       }
     }
   }
-
-
-
 }

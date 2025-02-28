@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_log_exercise/src/model/exercise/exercise_per_workout_model.dart';
+import 'package:gym_log_exercise/src/service/workout_plan_service.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_log_exercise/src/widgets/exercise/exercise_list_widget.dart';
 
@@ -18,25 +19,53 @@ class BegWorkoutWidget extends StatefulWidget {
   _BegWorkoutWidgetState createState() => _BegWorkoutWidgetState();
 }
 
-class _BegWorkoutWidgetState extends State<BegWorkoutWidget> with SingleTickerProviderStateMixin {
+class _BegWorkoutWidgetState extends State<BegWorkoutWidget>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late ScrollController _scrollController;
 
   // Track the currently selected index
   int _selectedIndex = 15; // Set to 15 (today) by default
+  late WorkoutPlanService _exerciseService;
+  List<ExercisesPerWorkoutModel> _exercises = [];
 
   @override
   void initState() {
     super.initState();
 
     // Initialize TabController and ScrollController
-    _tabController = TabController(length: 31, vsync: this, initialIndex: _selectedIndex); // 15th index is today
+    _tabController = TabController(
+        length: 31,
+        vsync: this,
+        initialIndex: _selectedIndex); // 15th index is today
     _scrollController = ScrollController();
+    _exerciseService = WorkoutPlanService();
 
     // Automatically scroll to today's date after the frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToCurrentDate();
+      _fetchExercisesForDate(_getSelectedDate());
     });
+  }
+
+  // Fetch exercises when the user selects a new date
+  void _fetchExercisesForDate(DateTime date) async {
+    int userId = 2; // Replace with actual user ID
+    int workoutProgramId = 2; // Replace with actual workout program ID
+    String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+
+    List<ExercisesPerWorkoutModel> fetchedExercises = await _exerciseService
+        .fetchExercises(userId, workoutProgramId, formattedDate);
+
+    setState(() {
+      _exercises = fetchedExercises;
+    });
+  }
+
+  // Get selected date based on index
+  DateTime _getSelectedDate() {
+    DateTime today = DateTime.now();
+    return today.subtract(Duration(days: 15 - _selectedIndex));
   }
 
   @override
@@ -62,25 +91,25 @@ class _BegWorkoutWidgetState extends State<BegWorkoutWidget> with SingleTickerPr
     DateTime today = DateTime.now();
 
     // Generate a list of 31 dates: 15 days before and 15 days after today
-    List<DateTime> dateRange = List.generate(31, (index) => today.subtract(Duration(days: 15 - index)));
+    List<DateTime> dateRange = List.generate(
+        31, (index) => today.subtract(Duration(days: 15 - index)));
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            backgroundColor: AppColors.BLACK,
-            elevation: 0,
-          ),
-      
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        backgroundColor: AppColors.BLACK,
+        elevation: 0,
+      ),
       body: Column(
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: SizedBox(
-              height: 80,  // Height for the date cards
+              height: 80, // Height for the date cards
               child: ListView.builder(
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,
@@ -94,23 +123,30 @@ class _BegWorkoutWidgetState extends State<BegWorkoutWidget> with SingleTickerPr
                     onTap: () {
                       setState(() {
                         _selectedIndex = index;
-                        _tabController.index = index; // Update the tab to the selected date
+                        _tabController.index =
+                            index; // Update the tab to the selected date
                       });
+                      _fetchExercisesForDate(date);
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 5),
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
                       decoration: BoxDecoration(
                         color: isToday
-                            ? const Color(0xfff5af19)  // Highlight today's date
+                            ? const Color(0xfff5af19) // Highlight today's date
                             : isSelected
-                                ? Colors.blueAccent  // Highlight selected date
-                                : Colors.grey[850],  // Default color for other dates
+                                ? Colors.blueAccent // Highlight selected date
+                                : Colors
+                                    .grey[850], // Default color for other dates
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: (isToday || isSelected)
                             ? [
                                 BoxShadow(
-                                  color: (isToday ? Colors.orange : Colors.blueAccent).withOpacity(0.4),
+                                  color: (isToday
+                                          ? Colors.orange
+                                          : Colors.blueAccent)
+                                      .withOpacity(0.4),
                                   blurRadius: 10,
                                   offset: const Offset(0, 5),
                                 ),
@@ -125,7 +161,9 @@ class _BegWorkoutWidgetState extends State<BegWorkoutWidget> with SingleTickerPr
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: isToday || isSelected ? Colors.black : Colors.white,
+                              color: isToday || isSelected
+                                  ? Colors.black
+                                  : Colors.white,
                             ),
                           ),
                           const SizedBox(height: 5),
@@ -133,7 +171,9 @@ class _BegWorkoutWidgetState extends State<BegWorkoutWidget> with SingleTickerPr
                             DateFormat('EEE').format(date),
                             style: TextStyle(
                               fontSize: 14,
-                              color: isToday || isSelected ? Colors.black : Colors.white70,
+                              color: isToday || isSelected
+                                  ? Colors.black
+                                  : Colors.white70,
                             ),
                           ),
                         ],
@@ -149,12 +189,13 @@ class _BegWorkoutWidgetState extends State<BegWorkoutWidget> with SingleTickerPr
               controller: _tabController,
               children: dateRange.map((date) {
                 // Filter exercises for the specific date
-                List<ExercisesPerWorkoutModel> filteredExercises = widget.workoutExercises
+                List<ExercisesPerWorkoutModel> filteredExercises = widget
+                    .workoutExercises
                     .where((exercise) => _isExerciseForDate(exercise, date))
                     .toList();
 
                 return ExerciseListWidget(
-                  exercises: filteredExercises,
+                  exercises: _exercises,
                   selectedWorkout: widget.selectedWorkout,
                 );
               }).toList(),
