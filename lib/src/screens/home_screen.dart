@@ -1,4 +1,5 @@
 import 'package:gym_log_exercise/src/screens/diet/diet_screen.dart';
+import 'package:gym_log_exercise/src/screens/diet/diet_tracking_screen.dart';
 import 'package:gym_log_exercise/src/screens/exercise/exercise_history_screen.dart';
 import 'package:gym_log_exercise/src/screens/workout/workout_at_gym_screen.dart';
 
@@ -63,7 +64,7 @@ _getPage(int page) {
     case 0:
       return const WorkoutAtGymScreen();
     case 1:
-      return DietScreen();
+      return DietTrackingScreen();
     case 2:
       return BMIScreen();
     case 3:

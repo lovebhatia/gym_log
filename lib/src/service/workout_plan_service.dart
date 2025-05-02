@@ -23,7 +23,6 @@ class WorkoutPlanService {
 
     try {
       final response = await http.get(url);
-
       if (response.statusCode == 200) {
         List<dynamic> jsonData = json.decode(response.body);
         return jsonData
